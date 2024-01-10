@@ -8,26 +8,26 @@ public class Horaire {
 	private LocalTime heureDeDebut;
 	private LocalTime heureDeFin;
 	private String creneau;
-	private int idRestaurant;
+	private Restaurant restaurant;
 	
 	public Horaire() {
 	}
 
-	public Horaire(String jour, LocalTime heureDeDebut, LocalTime heureDeFin,String creneau,int idRestaurant) {
+	public Horaire(String jour, LocalTime heureDeDebut, LocalTime heureDeFin,String creneau,Restaurant restaurant) {
 		this.jour = jour;
 		this.heureDeDebut = heureDeDebut;
 		this.heureDeFin = heureDeFin;
 		this.creneau = creneau;
-		this.idRestaurant = idRestaurant;
+		this.restaurant = restaurant;
 	}
 
-	public Horaire(int id,String jour, LocalTime heureDeDebut, LocalTime heureDeFin,String creneau,int idRestaurant) {
+	public Horaire(int id,String jour, LocalTime heureDeDebut, LocalTime heureDeFin,String creneau,Restaurant restaurant) {
 		this.id = id;
 		this.jour = jour;
 		this.heureDeDebut = heureDeDebut;
 		this.heureDeFin = heureDeFin;
 		this.creneau = creneau;
-		this.idRestaurant = idRestaurant;
+		this.restaurant = restaurant;
 	}
 
 	public int getId() {
@@ -70,19 +70,21 @@ public class Horaire {
 		this.creneau = creneau;
 	}
 
-	public int getIdRestaurant() {
-		return idRestaurant;
+	public Restaurant getRestaurant() {
+		return restaurant;
 	}
 
-	public void setIdRestaurant(int idRestaurant) {
-		this.idRestaurant = idRestaurant;
+	public void setRestaurant(Restaurant restaurant) {
+		this.restaurant = restaurant;
 	}
 
 	@Override
 	public String toString() {
 		return "Horaire [id=" + id + ", jour=" + jour + ", heureDeDebut=" + heureDeDebut + ", heureDeFin=" + heureDeFin
-				+ ", creneau=" + creneau + ", idRestaurant=" + idRestaurant + "]";
+				+ ", creneau=" + creneau + ", restaurant=" + restaurant + "]";
 	}
+
+	
 
 	
 	

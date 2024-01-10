@@ -7,17 +7,22 @@ import java.util.Scanner;
 
 import bll.BLLException;
 import bll.HoraireBLL;
+import bll.RestaurantBLL;
 import bo.Horaire;
+import bo.Restaurant;
 
 public class TestHoraire {
 	private static Scanner scan;
 	private static HoraireBLL bll;
+	private static RestaurantBLL restaurantBLL;
 	
 	public static void main(String[] args) {
+		
 		System.out.println("Bienvenue dans notre application de gestion des horaires");
 		scan = new Scanner(System.in);
 		try {
 			bll = new HoraireBLL();
+			restaurantBLL = new RestaurantBLL();
 		} catch (BLLException e) {
 			e.printStackTrace();
 		}
@@ -87,33 +92,35 @@ public class TestHoraire {
 		}
 	}
 
-	private static void creerHoraire() {
-		
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-		
-		System.out.println("Vous avez choisi d'ajouter un horaire");
-		
-		System.out.println("Veuillez saisir un jour");
-		String jour = scan.nextLine();
-		
-		System.out.println("Veuillez saisir l'heure de debut de service");
-		String inputHeureDeDebut = scan.nextLine();
-		scan.nextLine();
-		LocalTime heureDeDebut = LocalTime.parse(inputHeureDeDebut, formatter);
-		
-		System.out.println("Veuillez saisir l'heure de fin de service");
-		String inputHeureDeFin = scan.nextLine();
-		scan.nextLine();
-		LocalTime heureDeFin = LocalTime.parse(inputHeureDeFin, formatter);
-		
-		System.out.println("Veuillez saisir le creneau");
-		String creneau = scan.nextLine();
-		
-		System.out.println("Veuillez saisir l'id du restaurant");
-		int idRestaurant = scan.nextInt();
-		
+	private static void creerHoraire() {		
+		Restaurant restaurant = null;
 		try {
-			Horaire horaireAjoute = bll.insert(jour, heureDeDebut, heureDeFin,creneau,idRestaurant);
+			
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+			
+			System.out.println("Vous avez choisi d'ajouter un horaire");
+			
+			System.out.println("Veuillez saisir un jour");
+			String jour = scan.nextLine();
+			
+			System.out.println("Veuillez saisir l'heure de debut de service");
+			String inputHeureDeDebut = scan.nextLine();
+			scan.nextLine();
+			LocalTime heureDeDebut = LocalTime.parse(inputHeureDeDebut, formatter);
+			
+			System.out.println("Veuillez saisir l'heure de fin de service");
+			String inputHeureDeFin = scan.nextLine();
+			scan.nextLine();
+			LocalTime heureDeFin = LocalTime.parse(inputHeureDeFin, formatter);
+			
+			System.out.println("Veuillez saisir le creneau");
+			String creneau = scan.nextLine();
+			
+			System.out.println("Veuillez saisir l'id du restaurant");
+			int restaurantId = scan.nextInt();
+			scan.nextLine();
+			restaurant = restaurantBLL.selectById(restaurantId);
+			Horaire horaireAjoute = bll.insert(jour, heureDeDebut, heureDeFin,creneau,restaurant);
 			System.out.println("Horaire ajouté " + horaireAjoute);
 		} catch (BLLException e) {
 			System.out.println("Une erreur est survenue :");

@@ -8,7 +8,10 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
+import bll.BLLException;
+import bll.RestaurantBLL;
 import bo.Horaire;
+import bo.Restaurant;
 
 // CRUD
 public class HoraireDAOJdbcImpl implements GenericDAO<Horaire> {
@@ -21,6 +24,7 @@ public class HoraireDAOJdbcImpl implements GenericDAO<Horaire> {
 	private static final String SELECT = "SELECT * FROM "+ TABLE_NAME;
 	
 	private Connection cnx;
+
 	
 	public HoraireDAOJdbcImpl() throws DALException {
 		cnx = ConnectionProvider.getConnection();
@@ -40,11 +44,13 @@ public class HoraireDAOJdbcImpl implements GenericDAO<Horaire> {
 				horaire.setHeureDeDebut(rs.getTime("heurededebut").toLocalTime());
 				horaire.setHeureDeFin(rs.getTime("heuredefin").toLocalTime());
 				horaire.setCreneau(rs.getString("creneau"));
-				horaire.setIdRestaurant(rs.getInt("id_restaurant"));
-				
+				int idRestaurant = rs.getInt("id_restaurant");
+				RestaurantBLL restaurantBll = new RestaurantBLL();
+				Restaurant restaurant = restaurantBll.selectById(idRestaurant);
+				horaire.setRestaurant(restaurant);
 				horaires.add(horaire);
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | BLLException e) {
 			throw new DALException("Impossible de recuperer les informations", e);
 		}
 		return horaires;
@@ -63,9 +69,12 @@ public class HoraireDAOJdbcImpl implements GenericDAO<Horaire> {
 				horaire.setHeureDeDebut(rs.getTime("heurededebut").toLocalTime());
 				horaire.setHeureDeFin(rs.getTime("heuredefin").toLocalTime());
 				horaire.setCreneau(rs.getString("creneau"));
-				horaire.setIdRestaurant(rs.getInt("id_restaurant"));
+				int idRestaurant = rs.getInt("id_restaurant");
+				RestaurantBLL restaurantBll = new RestaurantBLL();
+				Restaurant restaurant = restaurantBll.selectById(idRestaurant);
+				horaire.setRestaurant(restaurant);
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | BLLException e) {
 			throw new DALException("Impossible de recuperer les informations pour l'id "+ id, e);
 		}
 		return horaire;
@@ -77,9 +86,9 @@ public class HoraireDAOJdbcImpl implements GenericDAO<Horaire> {
 			PreparedStatement ps = cnx.prepareStatement(INSERT, PreparedStatement.RETURN_GENERATED_KEYS);
 			ps.setString(1, horaire.getJour());
 			ps.setTime(2, Time.valueOf(horaire.getHeureDeDebut()));
-			ps.setTime(3, Time.valueOf(horaire.getHeureDeDebut()));
+			ps.setTime(3, Time.valueOf(horaire.getHeureDeFin()));
 			ps.setString(4, horaire.getCreneau());
-			ps.setInt(5, horaire.getIdRestaurant());
+			ps.setInt(5, horaire.getRestaurant().getId());
 			ps.executeUpdate();
 			
 			// Le bloc suivant permet de faire la récupération de l'id
@@ -100,7 +109,7 @@ public class HoraireDAOJdbcImpl implements GenericDAO<Horaire> {
 			ps.setTime(2, Time.valueOf(horaire.getHeureDeDebut()));
 			ps.setTime(3, Time.valueOf(horaire.getHeureDeDebut()));
 			ps.setString(4, horaire.getCreneau());
-			ps.setInt(5, horaire.getIdRestaurant());
+			ps.setInt(5, horaire.getRestaurant().getId());
 			ps.setInt(6, horaire.getId());
 			ps.executeUpdate();
 		} catch (SQLException e) {
