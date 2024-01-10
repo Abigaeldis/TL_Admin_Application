@@ -2,40 +2,27 @@ package bo;
 
 public class Table {
 	private int id;
-	private String nom;
-	private String prenom;
-	private String mail;
-	private String motdepasse;
-	private String telephone;
-	private String adresse;
-	private String role;
+	private int numTable;
+	private int capaciteTable;
+	private String etat;
 	private int idRestaurant;
-	
+		
 	public Table() {
+		super();
 	}
-	
-	public Table(String nom, String prenom, String mail, String motdepasse, String telephone, String adresse,
-			String role, int idRestaurant) {
-		this.nom = nom;
-		this.prenom = prenom;
-		this.mail = mail;
-		this.motdepasse = motdepasse;
-		this.telephone = telephone;
-		this.adresse = adresse;
-		this.role = role;
+
+	public Table(int numTable, int capaciteTable, String etat, int idRestaurant) {
+		this.numTable = numTable;
+		this.capaciteTable = capaciteTable;
+		this.etat = etat;
 		this.idRestaurant = idRestaurant;
 	}
 
-	public Table(int id, String nom, String prenom, String mail, String motdepasse, String telephone, String adresse,
-			String role, int idRestaurant) {
+	public Table(int id, int numTable, int capaciteTable, String etat, int idRestaurant) {
 		this.id = id;
-		this.nom = nom;
-		this.prenom = prenom;
-		this.mail = mail;
-		this.motdepasse = motdepasse;
-		this.telephone = telephone;
-		this.adresse = adresse;
-		this.role = role;
+		this.numTable = numTable;
+		this.capaciteTable = capaciteTable;
+		this.etat = etat;
 		this.idRestaurant = idRestaurant;
 	}
 
@@ -47,60 +34,28 @@ public class Table {
 		this.id = id;
 	}
 
-	public String getNom() {
-		return nom;
+	public int getNumTable() {
+		return numTable;
 	}
 
-	public void setNom(String nom) {
-		this.nom = nom;
+	public void setNumTable(int numTable) {
+		this.numTable = numTable;
 	}
 
-	public String getPrenom() {
-		return prenom;
+	public int getCapaciteTable() {
+		return capaciteTable;
 	}
 
-	public void setPrenom(String prenom) {
-		this.prenom = prenom;
+	public void setCapaciteTable(int capaciteTable) {
+		this.capaciteTable = capaciteTable;
 	}
 
-	public String getMail() {
-		return mail;
+	public String getEtat() {
+		return etat;
 	}
 
-	public void setMail(String mail) {
-		this.mail = mail;
-	}
-
-	public String getMotdepasse() {
-		return motdepasse;
-	}
-
-	public void setMotdepasse(String motdepasse) {
-		this.motdepasse = motdepasse;
-	}
-
-	public String getTelephone() {
-		return telephone;
-	}
-
-	public void setTelephone(String telephone) {
-		this.telephone = telephone;
-	}
-
-	public String getAdresse() {
-		return adresse;
-	}
-
-	public void setAdresse(String adresse) {
-		this.adresse = adresse;
-	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
+	public void setEtat(String etat) {
+		this.etat = etat;
 	}
 
 	public int getIdRestaurant() {
@@ -113,8 +68,9 @@ public class Table {
 
 	@Override
 	public String toString() {
-		return "Table [id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", mail=" + mail + ", motdepasse="
-				+ motdepasse + ", telephone=" + telephone + ", adresse=" + adresse + ", role=" + role
-				+ ", id_restaurant=" + idRestaurant + "]";
+		return "Table [id=" + id + ", numTable=" + numTable + ", capaciteTable=" + capaciteTable + ", etat=" + etat
+				+ ", idRestaurant=" + idRestaurant + "]";
 	}
+	
+	
 }
