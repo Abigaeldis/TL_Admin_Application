@@ -1,23 +1,21 @@
 package controller;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
 import bll.BLLException;
-import bll.ComposantBLL;
-import bo.Composant;
+import bll.RestaurantBLL;
+import bo.Restaurant;
 
-public class TestComposants {
+public class TestRestaurants {
 	private static Scanner scan;
-	private static ComposantBLL bll;
+	private static RestaurantBLL bll;
 	
 	public static void main(String[] args) {
-		System.out.println("Bienvenue dans notre application de gestion des composants");
+		System.out.println("Bienvenue dans notre application de gestion des restaurants");
 		scan = new Scanner(System.in);
 		try {
-			bll = new ComposantBLL();
+			bll = new RestaurantBLL();
 		} catch (BLLException e) {
 			e.printStackTrace();
 		}
@@ -30,13 +28,13 @@ public class TestComposants {
 			
 			switch (choix) {
 			case 1:
-				creerComposant();
+				creerRestaurant();
 				break;
 			case 2:
-				listerComposant();
+				listerRestaurant();
 				break;
 			case 3:
-				supprimerComposant();
+				supprimerRestaurant();
 				break;
 			case 4:
 				System.out.println("Byebye");
@@ -52,34 +50,34 @@ public class TestComposants {
 		
 	}
 	
-	private static void supprimerComposant() {
+	private static void supprimerRestaurant() {
 		try {
-			List<Composant> composants = bll.selectAll();
-			if (composants.size() == 0) {
-				System.out.println("Il n'existe aucun composant en base");
+			List<Restaurant> restaurants = bll.selectAll();
+			if (restaurants.size() == 0) {
+				System.out.println("Il n'existe aucun restaurant en base de données");
 				return;
 			}
 		} catch (BLLException e1) {
 			e1.printStackTrace();
 		}
 		
-		System.out.println("Vous avez choisi de supprimer un composant");
-		System.out.println("Veuillez saisir l'id du composant à supprimer");
+		System.out.println("Vous avez choisi de supprimer un restaurant");
+		System.out.println("Veuillez saisir l'id du restaurant à supprimer");
 		int id = scan.nextInt();
 		scan.nextLine();
 		
 		try {
 			bll.delete(id);
-			System.out.println("Le composant a bien été supprimé");
+			System.out.println("Le restaurant a bien été supprimé");
 		} catch (BLLException e) {
 			System.out.println("L'id saisi n'existe pas en base de données");
 		}
 	}
 
-	private static void listerComposant() {
+	private static void listerRestaurant() {
 		try {
-			List<Composant> composants = bll.selectAll();
-			for (Composant current : composants) {
+			List<Restaurant> restaurants = bll.selectAll();
+			for (Restaurant current : restaurants) {
 				System.out.println("\t" + current.getId() + ". " + current);
 			}
 		} catch (BLLException e) {
@@ -87,24 +85,21 @@ public class TestComposants {
 		}
 	}
 
-	private static void creerComposant() {
-		System.out.println("Vous avez choisi d'ajouter un composant");
+	private static void creerRestaurant() {
+		System.out.println("Vous avez choisi d'ajouter un restaurant");
 		
-		System.out.println("Veuillez saisir son nom");
+		System.out.println("Veuillez saisir le nom du restaurant");
 		String nom = scan.nextLine();
 		
-		System.out.println("Veuillez saisir la nature du composant (RAM, DD, CPU, GPU, ALIM)");
-		String nature = scan.nextLine();
+		System.out.println("Veuillez saisir l'adresse du restaurant");
+		String adresse = scan.nextLine();
 		
-		System.out.println("Veuillez saisir la date de sortie du composant (jj/mm/aaaa)");
-		String dateSortieStr = scan.nextLine();
-		
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-		LocalDate dateSortie = LocalDate.parse(dateSortieStr, dtf);
+		System.out.println("Veuillez saisir une description pour votre restaurant");
+		String description = scan.nextLine();
 		
 		try {
-			Composant composantAjoute = bll.insert(nom, nature, dateSortie);
-			System.out.println("Composant ajouté " + composantAjoute);
+			Restaurant restaurantAjoute = bll.insert(nom, adresse, description);
+			System.out.println("Restaurant ajouté avec succès " + restaurantAjoute);
 		} catch (BLLException e) {
 			System.out.println("Une erreur est survenue :");
 			for (String erreur : e.getErreurs()) {
@@ -116,9 +111,9 @@ public class TestComposants {
 	}
 	
 	private static int afficherMenu() {
-		System.out.println("1. Créer un composant");
-		System.out.println("2. Consulter les composants");
-		System.out.println("3. Supprimer un composant");
+		System.out.println("1. Créer un restaurant");
+		System.out.println("2. Consulter les restaurants");
+		System.out.println("3. Supprimer un restaurant");
 		System.out.println("4. Quitter");
 		int choix = scan.nextInt();
 		scan.nextLine();

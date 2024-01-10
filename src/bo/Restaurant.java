@@ -1,28 +1,34 @@
 package bo;
 
-import java.time.LocalDate;
-
-public class Composant {
+public class Restaurant {
 	private int id;
 	private String nom;
-	private String nature;
-	private LocalDate dateSortie;
+	private String adresse;
+	private String description;
 	
-	public Composant() {
+	/*
+	 * Constructeurs
+	 */
+	
+	public Restaurant() {
 	}
 
-	public Composant(String nom, String nature, LocalDate dateSortie) {
-		this.nom = nom;
-		this.nature = nature;
-		this.dateSortie = dateSortie;
-	}
-
-	public Composant(int id, String nom, String nature, LocalDate dateSortie) {
+	public Restaurant(int id, String nom, String adresse, String description) {
 		this.id = id;
 		this.nom = nom;
-		this.nature = nature;
-		this.dateSortie = dateSortie;
+		this.adresse = adresse;
+		this.description = description;
 	}
+	
+	public Restaurant(String nom, String adresse, String description) {
+		this.nom = nom;
+		this.adresse = adresse;
+		this.description = description;
+	}
+
+	/*
+	 * Getters et Setters
+	 */
 
 	public int getId() {
 		return id;
@@ -40,24 +46,30 @@ public class Composant {
 		this.nom = nom;
 	}
 
-	public String getNature() {
-		return nature;
+	public String getAdresse() {
+		return adresse;
 	}
 
-	public void setNature(String nature) {
-		this.nature = nature;
+	public void setAdresse(String adresse) {
+		this.adresse = adresse;
 	}
 
-	public LocalDate getDateSortie() {
-		return dateSortie;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDateSortie(LocalDate dateSortie) {
-		this.dateSortie = dateSortie;
+	public void setDescription(String description) {
+		this.description = description;
 	}
-
+	
+	/*
+	 * toString
+	 */
+	
 	@Override
 	public String toString() {
-		return "Composant [id=" + id + ", nom=" + nom + ", nature=" + nature + ", dateSortie=" + dateSortie + "]";
+		return "Restaurant [id=" + id + ", nom=" + nom + ", adresse=" + adresse + ", description=" + description + "]";
 	}
+	
+	
 }

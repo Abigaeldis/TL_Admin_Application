@@ -1,82 +1,83 @@
 package bll;
 
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
-import bo.Composant;
-import dal.GenericDAO;
-import dal.ComposantDAOJdbcImpl;
+import bo.Restaurant;
 import dal.DALException;
+import dal.GenericDAO;
+import dal.RestaurantDAOJdbcImpl;
 
-public class ComposantBLL {
-	private GenericDAO<Composant> dao;
+public class RestaurantBLL {
+	private GenericDAO<Restaurant> dao;
 	
-	public ComposantBLL() throws BLLException {
+	public RestaurantBLL() throws BLLException {
 		try {
-			dao = new ComposantDAOJdbcImpl();
+			dao = new RestaurantDAOJdbcImpl();
 		} catch (DALException e) {
 			throw new BLLException("Echec de la connexion", e);
 		}
 	}
 	
-	public List<Composant> selectAll() throws BLLException {
+	public List<Restaurant> selectAll() throws BLLException {
 		try {
 			return dao.selectAll();
 		} catch (DALException e) {
-			throw new BLLException("Echec de la recuperation des composants", e);
+			throw new BLLException("Echec de la recuperation des restaurants", e);
 		}
 	}
 	
-	public Composant selectById(int id) throws BLLException {
+	public Restaurant selectById(int id) throws BLLException {
 		try {
 			return dao.selectById(id);
 		} catch (DALException e) {
-			throw new BLLException("Echec de la recuperation du composant d'id " + id, e);
+			throw new BLLException("Echec de la recuperation du restaurant d'id " + id, e);
 		}
 	}
 	
-	public Composant insert(String nom, String nature, LocalDate dateSortie) throws BLLException {
+	public Restaurant insert(String nom, String adresse, String description) throws BLLException {
 		
 		BLLException blleException = new BLLException();
 		if (nom.length() < 2) {
 			blleException.ajouterErreur("Le nom doit faire au moins 2 caractères");
 		}
 		
-		if (nom.length() > 50) {
-			blleException.ajouterErreur("Le nom doit faire maximum 50 caractères");
+		if (nom.length() > 30) {
+			blleException.ajouterErreur("Le nom doit faire au maximum 30 caractères");
 		}
 		
-		List<String> valeursValides = Arrays.asList("RAM", "DD", "GPU", "CPU", "ALIM");
-		if (!valeursValides.contains(nature)) {
-			blleException.ajouterErreur("La nature du composant doit valoir RAM, DD, CPU, GPU ou ALIM");
+		if (adresse.length() < 2) {
+			blleException.ajouterErreur("L'adresse doit faire au moins 2 caractères");
 		}
 		
-		if (dateSortie.isBefore(LocalDate.EPOCH)) {
-			blleException.ajouterErreur("La date de sortie doit être postérieure au 01/01/1970");
+		if (adresse.length() > 150) {
+			blleException.ajouterErreur("L'adresse doit faire au maximum 150 caractères");
 		}
 		
-		if (dateSortie.isAfter(LocalDate.now())) {
-			blleException.ajouterErreur("La date de sortie doit être antérieure à la date du jour");
+		if (description.length() < 2) {
+			blleException.ajouterErreur("La description doit faire au moins 2 caractères");
+		}
+		
+		if (description.length() > 300) {
+			blleException.ajouterErreur("La description doit faire au maximum 300 caractères");
 		}
 		
 		if (blleException.getErreurs().size() > 0) {
 			throw blleException;
 		}
 		
-		Composant composant = new Composant(nom, nature, dateSortie);
+		Restaurant restaurant = new Restaurant(nom, adresse, description);
 		try {
-			dao.insert(composant);
+			dao.insert(restaurant);
 		} catch (DALException e) {
 			throw new BLLException("Echec de l'insertion", e);
 		}
-		return composant;
+		return restaurant;
 	}
 	
-	public void update(Composant composant) throws BLLException {
+	public void update(Restaurant restaurant) throws BLLException {
 		
 		try {
-			dao.update(composant);
+			dao.update(restaurant);
 		} catch (DALException e) {
 			throw new BLLException("Echec de la mise a jour", e);
 		}
