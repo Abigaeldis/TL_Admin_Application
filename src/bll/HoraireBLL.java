@@ -4,6 +4,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import bo.Horaire;
+import bo.Restaurant;
 import dal.DALException;
 import dal.GenericDAO;
 import dal.HoraireDAOJdbcImpl;
@@ -35,7 +36,7 @@ public class HoraireBLL {
 		}
 	}
 	
-	public Horaire insert(String jour, LocalTime heureDeDebut, LocalTime heureDeFin,String creneau,int idRestaurant) throws BLLException {
+	public Horaire insert(String jour, LocalTime heureDeDebut, LocalTime heureDeFin,String creneau,Restaurant restaurant) throws BLLException {
 		
 		BLLException blleException = new BLLException();
 //		if (nom.length() < 2) {
@@ -63,7 +64,7 @@ public class HoraireBLL {
 //			throw blleException;
 //		}
 		
-		Horaire horaire = new Horaire(jour, heureDeDebut, heureDeFin, creneau, idRestaurant);
+		Horaire horaire = new Horaire(jour, heureDeDebut, heureDeFin, creneau, restaurant);
 		try {
 			dao.insert(horaire);
 		} catch (DALException e) {
