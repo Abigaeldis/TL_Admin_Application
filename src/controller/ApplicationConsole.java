@@ -2,17 +2,24 @@ package controller;
 import java.util.Scanner;
 
 import bll.BLLException;
+import bll.PlatBLL;
+import bll.RestaurantBLL;
 import bll.TableBLL;
 
 public class ApplicationConsole {
 	private static Scanner scan;
 	private static TableBLL tableBll;
+	private static RestaurantBLL restaurantBll;
+	private static PlatBLL platBll;
 
 	public static void main(String[] args) {
 		System.out.println("Bienvenue dans notre application d'administration.\n");
 		scan = new Scanner(System.in);
 		try {
 			tableBll = new TableBLL();
+			restaurantBll = new RestaurantBLL();
+			platBll = new PlatBLL();
+			
 		} catch (BLLException e) {
 			e.printStackTrace();
 		}
