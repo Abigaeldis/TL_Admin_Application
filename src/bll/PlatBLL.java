@@ -1,9 +1,8 @@
 package bll;
 
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
+import bo.Carte;
 import bo.Plat;
 import dal.DALException;
 import dal.GenericDAO;
@@ -36,35 +35,11 @@ public class PlatBLL {
 		}
 	}
 	
-	public Plat insert(String nom, String description, Float prix, String type, int idCarte) throws BLLException {
+	public Plat insert(String nom, String description, Float prix, String type, Carte carte) throws BLLException {
 		
 		BLLException blleException = new BLLException();
-//		if (nom.length() < 2) {
-//			blleException.ajouterErreur("Le nom doit faire au moins 2 caractères");
-//		}
-//		
-//		if (nom.length() > 50) {
-//			blleException.ajouterErreur("Le nom doit faire maximum 50 caractères");
-//		}
-//		
-//		List<String> valeursValides = Arrays.asList("RAM", "DD", "GPU", "CPU", "ALIM");
-//		if (!valeursValides.contains(nature)) {
-//			blleException.ajouterErreur("La nature du plat doit valoir RAM, DD, CPU, GPU ou ALIM");
-//		}
-//		
-//		if (dateSortie.isBefore(LocalDate.EPOCH)) {
-//			blleException.ajouterErreur("La date de sortie doit être postérieure au 01/01/1970");
-//		}
-//		
-//		if (dateSortie.isAfter(LocalDate.now())) {
-//			blleException.ajouterErreur("La date de sortie doit être antérieure à la date du jour");
-//		}
-//		
-//		if (blleException.getErreurs().size() > 0) {
-//			throw blleException;
-//		}
+		Plat plat = new Plat(nom, description, prix, type, carte);
 		
-		Plat plat = new Plat(nom, description, prix, type, idCarte);
 		try {
 			dao.insert(plat);
 		} catch (DALException e) {

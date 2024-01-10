@@ -98,6 +98,7 @@ public class CarteDAOJdbcImpl implements GenericDAO<Carte> {
 			PreparedStatement ps = cnx.prepareStatement(UPDATE);
 			ps.setString(1, carte.getNom());
 			ps.setInt(2, carte.getRestaurant().getId());
+			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw new DALException("Impossible de mettre a jour les informations pour l'id "+ carte.getId(), e);
 		}
