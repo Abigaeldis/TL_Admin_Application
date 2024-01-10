@@ -10,7 +10,7 @@ import java.sql.SQLException;
  */
 public abstract class ConnectionProvider {
 	public static Connection getConnection() throws DALException {
-		String url = "jdbc:sqlserver://localhost;databasename=COMPOSANTS;trustservercertificate=true";
+		String url = "jdbc:sqlserver://localhost;databasename=TL_GESTION_RESTAURANTS;trustservercertificate=true";
 		try {
 			return DriverManager.getConnection(url, System.getenv("USER_SQLSERVER"), System.getenv("PASSWORD_SQLSERVER"));
 		} catch (SQLException e) {
