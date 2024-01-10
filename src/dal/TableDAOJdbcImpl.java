@@ -1,14 +1,15 @@
 package dal;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import bo.Table;
+import bll.BLLException;
+import bll.RestaurantBLL;
+import bo.Restaurant;
 import bo.Table;
 
 // CRUD
@@ -39,10 +40,19 @@ public class TableDAOJdbcImpl implements GenericDAO<Table> {
 				table.setNumTable(rs.getInt("num_table"));
 				table.setCapaciteTable(rs.getInt("capacite_table"));
 				table.setEtat(rs.getString("etat"));
-				table.setIdRestaurant(rs.getInt("id_restaurant"));
+				int idRestaurant = rs.getInt("id_restaurant");
+				RestaurantBLL restaurantBll = new RestaurantBLL();
+				List<Restaurant> restaurants = restaurantBll.selectAll();
+				Restaurant restaurant = null;
+				for (Restaurant current : restaurants) {
+					if (current.getId() == idRestaurant) {
+						restaurant = current;
+					}
+				}
+				table.setRestaurant(restaurant);
 				tables.add(table);
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | BLLException e) {
 			throw new DALException("Impossible de recuperer les informations", e);
 		}
 		return tables;
@@ -60,9 +70,18 @@ public class TableDAOJdbcImpl implements GenericDAO<Table> {
 				table.setNumTable(rs.getInt("num_table"));
 				table.setCapaciteTable(rs.getInt("capacite_table"));
 				table.setEtat(rs.getString("etat"));
-				table.setIdRestaurant(rs.getInt("id_restaurant"));
+				int idRestaurant = rs.getInt("id_restaurant");
+				RestaurantBLL restaurantBll = new RestaurantBLL();
+				List<Restaurant> restaurants = restaurantBll.selectAll();
+				Restaurant restaurant = null;
+				for (Restaurant current : restaurants) {
+					if (current.getId() == idRestaurant) {
+						restaurant = current;
+					}
+				}
+				table.setRestaurant(restaurant);
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | BLLException e) {
 			throw new DALException("Impossible de recuperer les informations pour l'id "+ id, e);
 		}
 		return table;
@@ -75,7 +94,7 @@ public class TableDAOJdbcImpl implements GenericDAO<Table> {
 			ps.setInt(1, table.getNumTable());
 			ps.setInt(2, table.getCapaciteTable());
 			ps.setString(3, table.getEtat());
-			ps.setInt(4, table.getIdRestaurant());
+			ps.setInt(4, table.getRestaurant().getId());
 			ps.executeUpdate();
 			
 			// Le bloc suivant permet de faire la récupération de l'id
@@ -95,7 +114,7 @@ public class TableDAOJdbcImpl implements GenericDAO<Table> {
 			ps.setInt(1, table.getNumTable());
 			ps.setInt(2, table.getCapaciteTable());
 			ps.setString(3, table.getEtat());
-			ps.setInt(4, table.getIdRestaurant());
+			ps.setInt(4, table.getRestaurant().getId());
 			ps.setInt(5, table.getId());
 			ps.executeUpdate();
 		} catch (SQLException e) {

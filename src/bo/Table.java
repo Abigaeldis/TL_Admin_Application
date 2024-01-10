@@ -5,25 +5,25 @@ public class Table {
 	private int numTable;
 	private int capaciteTable;
 	private String etat;
-	private int idRestaurant;
+	private Restaurant restaurant;
 		
 	public Table() {
 		super();
 	}
 
-	public Table(int numTable, int capaciteTable, String etat, int idRestaurant) {
+	public Table(int numTable, int capaciteTable, String etat, Restaurant restaurant) {
 		this.numTable = numTable;
 		this.capaciteTable = capaciteTable;
 		this.etat = etat;
-		this.idRestaurant = idRestaurant;
+		this.restaurant = restaurant;
 	}
 
-	public Table(int id, int numTable, int capaciteTable, String etat, int idRestaurant) {
+	public Table(int id, int numTable, int capaciteTable, String etat, Restaurant restaurant) {
 		this.id = id;
 		this.numTable = numTable;
 		this.capaciteTable = capaciteTable;
 		this.etat = etat;
-		this.idRestaurant = idRestaurant;
+		this.restaurant = restaurant;
 	}
 
 	public int getId() {
@@ -58,18 +58,18 @@ public class Table {
 		this.etat = etat;
 	}
 
-	public int getIdRestaurant() {
-		return idRestaurant;
+	public Restaurant getRestaurant() {
+		return restaurant;
 	}
 
-	public void setIdRestaurant(int idRestaurant) {
-		this.idRestaurant = idRestaurant;
+	public void setRestaurant(Restaurant restaurant) {
+		this.restaurant = restaurant;
 	}
 
 	@Override
 	public String toString() {
 		return "Table [id=" + id + ", numTable=" + numTable + ", capaciteTable=" + capaciteTable + ", etat=" + etat
-				+ ", idRestaurant=" + idRestaurant + "]";
+				+ ", restaurant n°" + restaurant.getId() + "]";
 	}
 	
 	
