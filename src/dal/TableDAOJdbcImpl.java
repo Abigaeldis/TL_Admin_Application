@@ -42,13 +42,7 @@ public class TableDAOJdbcImpl implements GenericDAO<Table> {
 				table.setEtat(rs.getString("etat"));
 				int idRestaurant = rs.getInt("id_restaurant");
 				RestaurantBLL restaurantBll = new RestaurantBLL();
-				List<Restaurant> restaurants = restaurantBll.selectAll();
-				Restaurant restaurant = null;
-				for (Restaurant current : restaurants) {
-					if (current.getId() == idRestaurant) {
-						restaurant = current;
-					}
-				}
+				Restaurant restaurant = restaurantBll.selectById(idRestaurant);
 				table.setRestaurant(restaurant);
 				tables.add(table);
 			}
@@ -72,13 +66,7 @@ public class TableDAOJdbcImpl implements GenericDAO<Table> {
 				table.setEtat(rs.getString("etat"));
 				int idRestaurant = rs.getInt("id_restaurant");
 				RestaurantBLL restaurantBll = new RestaurantBLL();
-				List<Restaurant> restaurants = restaurantBll.selectAll();
-				Restaurant restaurant = null;
-				for (Restaurant current : restaurants) {
-					if (current.getId() == idRestaurant) {
-						restaurant = current;
-					}
-				}
+				Restaurant restaurant = restaurantBll.selectById(idRestaurant);
 				table.setRestaurant(restaurant);
 			}
 		} catch (SQLException | BLLException e) {
