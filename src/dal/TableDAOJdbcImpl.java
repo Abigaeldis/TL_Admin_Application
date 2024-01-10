@@ -14,11 +14,9 @@ import bo.Table;
 // CRUD
 public class TableDAOJdbcImpl implements GenericDAO<Table> {
 	private static final String TABLE_NAME = "tables";
-	
 	private static final String DELETE = "DELETE FROM "+ TABLE_NAME +" WHERE id = ?";
-	private static final String UPDATE = "UPDATE "+ TABLE_NAME +" SET nom = ?, prenom = ?, mail = ?, motdepasse = ?, "
-			+ "								telephone = ?, adresse = ?, role = ?  WHERE id = ?";
-	private static final String INSERT = "INSERT INTO "+ TABLE_NAME +" (nom, nature, date_sortie) VALUES (?,?,?)";
+	private static final String UPDATE = "UPDATE "+ TABLE_NAME +" SET num_table = ?, capacite_table = ?, etat = ?, id_restaurant = ? WHERE id = ?";
+	private static final String INSERT = "INSERT INTO "+ TABLE_NAME +" (num_table, capacite_table, etat, id_restaurant) VALUES (?,?,?,?)";
 	private static final String SELECT_BY_ID = "SELECT * FROM "+ TABLE_NAME +" WHERE id = ?";
 	private static final String SELECT = "SELECT * FROM "+ TABLE_NAME;
 	
@@ -38,11 +36,10 @@ public class TableDAOJdbcImpl implements GenericDAO<Table> {
 			while (rs.next()) {
 				Table table = new Table();
 				table.setId(rs.getInt("id"));
-				table.setNom(rs.getString("nom"));
-				table.setPreom(rs.getString("prenom"));
-				table.setNature(rs.getString("nature"));
-				table.setDateSortie(rs.getDate("date_sortie").toLocalDate());
-				
+				table.setNumTable(rs.getInt("num_table"));
+				table.setCapaciteTable(rs.getInt("capacite_table"));
+				table.setEtat(rs.getString("etat"));
+				table.setIdRestaurant(rs.getInt("id_restaurant"));
 				tables.add(table);
 			}
 		} catch (SQLException e) {
@@ -52,59 +49,57 @@ public class TableDAOJdbcImpl implements GenericDAO<Table> {
 	}
 	
 	public Table selectById(int id) throws DALException {
-		Table composant = null;
+		Table table = null;
 		try {
 			PreparedStatement ps = cnx.prepareStatement(SELECT_BY_ID);
 			ps.setInt(1, id); // Remplace le '?' numero 1 par la valeur de l'id
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
-				composant = new Table();
-				composant.setId(rs.getInt("id"));
-				composant.setNom(rs.getString("nom"));
-				composant.setNature(rs.getString("nature"));
-				/*
-				 * rs.getDate() --> restitue une java.sql.Date
-				 * composant.setDateSortie(...) s'attend à une LocalDate
-				 * .toLocalDate() permet la conversion de java.sql.Date vers LocalDate
-				 */
-				composant.setDateSortie(rs.getDate("date_sortie").toLocalDate());
+				table = new Table();
+				table.setId(rs.getInt("id"));
+				table.setNumTable(rs.getInt("num_table"));
+				table.setCapaciteTable(rs.getInt("capacite_table"));
+				table.setEtat(rs.getString("etat"));
+				table.setIdRestaurant(rs.getInt("id_restaurant"));
 			}
 		} catch (SQLException e) {
 			throw new DALException("Impossible de recuperer les informations pour l'id "+ id, e);
 		}
-		return composant;
+		return table;
 	}
 	
-	public void insert(Table composant) throws DALException {
+	public void insert(Table table) throws DALException {
 		try {
 			// L'ajout de RETURN_GENERATED_KEYS permet de récupérer l'id généré par la base
 			PreparedStatement ps = cnx.prepareStatement(INSERT, PreparedStatement.RETURN_GENERATED_KEYS);
-			ps.setString(1, composant.getNom());
-			ps.setString(2, composant.getNature());
-			ps.setDate(3, Date.valueOf(composant.getDateSortie()));
+			ps.setInt(1, table.getNumTable());
+			ps.setInt(2, table.getCapaciteTable());
+			ps.setString(3, table.getEtat());
+			ps.setInt(4, table.getIdRestaurant());
 			ps.executeUpdate();
 			
 			// Le bloc suivant permet de faire la récupération de l'id
 			ResultSet rs = ps.getGeneratedKeys();
 			if (rs.next()) { // Va chercher dans le resultat, la première ligne
 				int id = rs.getInt(1); // plus précisément, le int à la première colonne
-				composant.setId(id);
+				table.setId(id);
 			}
 		} catch (SQLException e) {
 			throw new DALException("Impossible d'inserer les donnees.", e);
 		}
 	}
 	
-	public void update(Table composant) throws DALException {
+	public void update(Table table) throws DALException {
 		try {
 			PreparedStatement ps = cnx.prepareStatement(UPDATE);
-			ps.setString(1, composant.getNom());
-			ps.setString(2, composant.getNature());
-			ps.setDate(3, Date.valueOf(composant.getDateSortie()));
-			ps.setInt(4, composant.getId());
+			ps.setInt(1, table.getNumTable());
+			ps.setInt(2, table.getCapaciteTable());
+			ps.setString(3, table.getEtat());
+			ps.setInt(4, table.getIdRestaurant());
+			ps.setInt(5, table.getId());
 			ps.executeUpdate();
 		} catch (SQLException e) {
-			throw new DALException("Impossible de mettre a jour les informations pour l'id "+ composant.getId(), e);
+			throw new DALException("Impossible de mettre a jour les informations pour l'id "+ table.getId(), e);
 		}
 	}
 	
