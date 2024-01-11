@@ -35,7 +35,7 @@ public class CarteBLL {
 		}
 	}
 	
-	public Carte insert(String nom, Restaurant restaurant) throws BLLException {
+	public Carte insert(String nom) throws BLLException {
 		
 		BLLException blleException = new BLLException();
 		if (nom.length() < 2) {
@@ -50,7 +50,7 @@ public class CarteBLL {
 			throw blleException;
 		}
 		
-		Carte carte = new Carte(nom, restaurant);
+		Carte carte = new Carte(nom);
 		try {
 			dao.insert(carte);
 		} catch (DALException e) {

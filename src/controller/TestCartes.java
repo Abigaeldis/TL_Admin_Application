@@ -7,7 +7,6 @@ import bll.BLLException;
 import bll.CarteBLL;
 import bll.RestaurantBLL;
 import bo.Carte;
-import bo.Restaurant;
 
 public class TestCartes {
 	private static Scanner scan;
@@ -95,13 +94,11 @@ public class TestCartes {
 		
 		System.out.println("Veuillez saisir le nom de votre nouvelle carte");
 		String nom = scan.nextLine();
-		
-		System.out.println("Veuillez saisir le restaurant auquel ajouter la carte");
-		int idRestaurant = scan.nextInt();
+
 		
 		try {
-			Restaurant restaurant = restaurantBll.selectById(idRestaurant);
-			Carte carteAjoutee = carteBll.insert(nom, restaurant);
+
+			Carte carteAjoutee = carteBll.insert(nom);
 			System.out.println("Carte ajoutée avec succès " + carteAjoutee);
 		} catch (BLLException e) {
 			System.out.println("Une erreur est survenue :");

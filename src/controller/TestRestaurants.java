@@ -4,18 +4,22 @@ import java.util.List;
 import java.util.Scanner;
 
 import bll.BLLException;
+import bll.CarteBLL;
 import bll.RestaurantBLL;
+import bo.Carte;
 import bo.Restaurant;
 
 public class TestRestaurants {
 	private static Scanner scan;
 	private static RestaurantBLL bll;
+	private static CarteBLL carteBll;
 	
 	public static void main(String[] args) {
 		System.out.println("Bienvenue dans notre application de gestion des restaurants");
 		scan = new Scanner(System.in);
 		try {
 			bll = new RestaurantBLL();
+			carteBll = new CarteBLL();
 		} catch (BLLException e) {
 			e.printStackTrace();
 		}
@@ -86,6 +90,9 @@ public class TestRestaurants {
 	}
 
 	private static void creerRestaurant() {
+		
+		Carte carte = null;
+		try {
 		System.out.println("Vous avez choisi d'ajouter un restaurant");
 		
 		System.out.println("Veuillez saisir le nom du restaurant");
@@ -96,9 +103,15 @@ public class TestRestaurants {
 		
 		System.out.println("Veuillez saisir une description pour votre restaurant");
 		String description = scan.nextLine();
+		System.out.println("Qu'elle carte voulez vous attribuer au restaurant");
+		System.out.println("Liste des cartes");
+		int carteSelectionner = scan.nextInt();
+		scan.nextLine();
 		
-		try {
-			Restaurant restaurantAjoute = bll.insert(nom, adresse, description);
+		carte = carteBll.selectById(carteSelectionner);
+		
+		
+			Restaurant restaurantAjoute = bll.insert(nom, adresse, description,carte);
 			System.out.println("Restaurant ajouté avec succès " + restaurantAjoute);
 		} catch (BLLException e) {
 			System.out.println("Une erreur est survenue :");

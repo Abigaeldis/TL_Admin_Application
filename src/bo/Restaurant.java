@@ -5,6 +5,7 @@ public class Restaurant {
 	private String nom;
 	private String adresse;
 	private String description;
+	private Carte carte;
 	
 	/*
 	 * Constructeurs
@@ -20,10 +21,11 @@ public class Restaurant {
 		this.description = description;
 	}
 	
-	public Restaurant(String nom, String adresse, String description) {
+	public Restaurant(String nom, String adresse, String description, Carte carte) {
 		this.nom = nom;
 		this.adresse = adresse;
 		this.description = description;
+		this.carte = carte;
 	}
 
 	/*
@@ -61,15 +63,21 @@ public class Restaurant {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	/*
-	 * toString
-	 */
-	
+
+	public Carte getCarte() {
+		return carte;
+	}
+
+	public void setCarte(Carte carte) {
+		this.carte = carte;
+	}
+
 	@Override
 	public String toString() {
-		return "Restaurant [id=" + id + ", nom=" + nom + ", adresse=" + adresse + ", description=" + description + "]";
+		return "Restaurant [id=" + id + ", nom=" + nom + ", adresse=" + adresse + ", description=" + description
+				+ ", carte=" + carte + "]";
 	}
+	
 	
 	
 }
