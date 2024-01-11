@@ -9,8 +9,10 @@ import java.util.List;
 
 import bll.BLLException;
 import bll.CarteBLL;
+import bll.RestaurantBLL;
 import bo.Carte;
 import bo.Plat;
+import bo.Restaurant;
 
 // CRUD
 public class PlatDAOJdbcImpl implements GenericDAO<Plat> {
