@@ -6,26 +6,26 @@ public class Plat {
 	private String description;
 	private Float prix;
 	private String type;
-	private int idCarte;
+	private Carte carte;
 	
 	public Plat() {
 	}
 
-	public Plat(String nom, String description, Float prix,String type,int idCarte) {
+	public Plat(String nom, String description, Float prix, String type, Carte carte) {
 		this.nom = nom;
 		this.description = description;
 		this.prix = prix;
 		this.type = type;
-		this.idCarte = idCarte;
+		this.carte = carte;
 	}
 
-	public Plat(int id,String nom, String description, Float prix,String type,int idCarte) {
+	public Plat(int id,String nom, String description, Float prix, String type, Carte carte) {
 		this.id = id;
 		this.nom = nom;
 		this.description = description;
 		this.prix = prix;
 		this.type = type;
-		this.idCarte = idCarte;
+		this.carte = carte;
 	}
 
 	public int getId() {
@@ -68,18 +68,18 @@ public class Plat {
 		this.type = type;
 	}
 
-	public int getIdCarte() {
-		return idCarte;
+	public Carte getCarte() {
+		return carte;
 	}
 
-	public void setIdCarte(int idCarte) {
-		this.idCarte = idCarte;
+	public void setCarte(Carte carte) {
+		this.carte = carte;
 	}
 
 	@Override
 	public String toString() {
 		return "Plat [id=" + id + ", nom=" + nom + ", description=" + description + ", prix=" + prix + ", type=" + type
-				+ ", idCarte=" + idCarte + "]";
+				+ ", carte=" + carte + "]";
 	}
 
 	

@@ -7,14 +7,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import bll.BLLException;
+import bll.CarteBLL;
+import bll.RestaurantBLL;
+import bo.Carte;
 import bo.Plat;
+import bo.Restaurant;
 
 // CRUD
 public class PlatDAOJdbcImpl implements GenericDAO<Plat> {
 	private static final String TABLE_NAME = " plats ";
 	
 	private static final String DELETE = "DELETE FROM"+ TABLE_NAME +" WHERE id = ?";
-	private static final String UPDATE = "UPDATE "+ TABLE_NAME +" SET nom = ?, description = ?, prix = ?, type = ? WHERE id = ?";
+	private static final String UPDATE = "UPDATE "+ TABLE_NAME +" SET nom = ?, description = ?, prix = ?, type = ?, id_carte = ? WHERE id = ?";
 	private static final String INSERT = "INSERT INTO "+ TABLE_NAME +" (nom, description, prix, type, id_carte) VALUES (?,?,?,?,?)";
 	private static final String SELECT_BY_ID = "SELECT * FROM "+ TABLE_NAME +" WHERE id = ?";
 	private static final String SELECT = "SELECT * FROM "+ TABLE_NAME;
@@ -39,11 +44,14 @@ public class PlatDAOJdbcImpl implements GenericDAO<Plat> {
 				plat.setDescription(rs.getString("description"));
 				plat.setPrix(rs.getFloat("prix"));
 				plat.setType(rs.getString("type"));
-				plat.setIdCarte(rs.getInt("id_carte"));
-				
+
+				int idCarte = rs.getInt("id_carte");
+				CarteBLL carteBll = new CarteBLL();
+				Carte carte = carteBll.selectById(idCarte);
+				plat.setCarte(carte);
 				plats.add(plat);
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | BLLException e) {
 			throw new DALException("Impossible de recuperer les informations", e);
 		}
 		return plats;
@@ -60,14 +68,14 @@ public class PlatDAOJdbcImpl implements GenericDAO<Plat> {
 				plat.setId(rs.getInt("id"));
 				plat.setNom(rs.getString("nom"));
 				plat.setDescription(rs.getString("description"));
-				/*
-				 * rs.getDate() --> restitue une java.sql.Date
-				 * plat.setPrix(...) s'attend à une LocalDate
-				 * .toLocalDate() permet la conversion de java.sql.Date vers LocalDate
-				 */
 				plat.setType(rs.getString("type"));
+				
+				int idCarte = rs.getInt("id_carte");
+				CarteBLL carteBll = new CarteBLL();
+				Carte carte = carteBll.selectById(idCarte);
+				plat.setCarte(carte);
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | BLLException e) {
 			throw new DALException("Impossible de recuperer les informations pour l'id "+ id, e);
 		}
 		return plat;
@@ -81,7 +89,7 @@ public class PlatDAOJdbcImpl implements GenericDAO<Plat> {
 			ps.setString(2, plat.getDescription());
 			ps.setFloat(3, plat.getPrix());
 			ps.setString(4, plat.getType());
-			ps.setInt(5, plat.getIdCarte());
+			ps.setInt(5, plat.getCarte().getId());
 			ps.executeUpdate();
 			
 			// Le bloc suivant permet de faire la récupération de l'id
@@ -102,7 +110,7 @@ public class PlatDAOJdbcImpl implements GenericDAO<Plat> {
 			ps.setString(2, plat.getDescription());
 			ps.setFloat(3, plat.getPrix());
 			ps.setString(4, plat.getType());
-			ps.setInt(5, plat.getId());
+			ps.setInt(5, plat.getCarte().getId());
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw new DALException("Impossible de mettre a jour les informations pour l'id "+ plat.getId(), e);
