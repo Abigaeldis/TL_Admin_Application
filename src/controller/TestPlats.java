@@ -4,18 +4,22 @@ import java.util.List;
 import java.util.Scanner;
 
 import bll.BLLException;
+import bll.CarteBLL;
 import bll.PlatBLL;
+import bo.Carte;
 import bo.Plat;
 
 public class TestPlats {
 	private static Scanner scan;
 	private static PlatBLL bll;
+	private static CarteBLL carteBll;
 	
 	public static void main(String[] args) {
 		System.out.println("Bienvenue dans notre application de gestion des plats");
 		scan = new Scanner(System.in);
 		try {
 			bll = new PlatBLL();
+			carteBll = new CarteBLL();
 		} catch (BLLException e) {
 			e.printStackTrace();
 		}
@@ -101,12 +105,13 @@ public class TestPlats {
 		System.out.println("Veuillez saisir le type de plat");
 		String type = scan.nextLine();
 		
-		System.out.println("Veuillez saisir l'id de la carte");
+		System.out.println("Veuillez saisir la carte à laquelle vous souhaiter ajouter le plat");
 		int idCarte = scan.nextInt();
 		
 		try {
-			Plat platAjoute = bll.insert(nom, description, prix,type,idCarte);
-			System.out.println("Plat ajouté " + platAjoute);
+			Carte carte = carteBll.selectById(idCarte);
+			Plat platAjoute = bll.insert(nom, description, prix, type, carte);
+			System.out.println("Plat ajouté avec succès " + platAjoute);
 		} catch (BLLException e) {
 			System.out.println("Une erreur est survenue :");
 			for (String erreur : e.getErreurs()) {

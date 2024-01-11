@@ -2,6 +2,7 @@ package bll;
 
 import java.util.List;
 
+import bo.Carte;
 import bo.Restaurant;
 import dal.DALException;
 import dal.GenericDAO;
@@ -34,7 +35,7 @@ public class RestaurantBLL {
 		}
 	}
 	
-	public Restaurant insert(String nom, String adresse, String description) throws BLLException {
+	public Restaurant insert(String nom, String adresse, String description, Carte carte) throws BLLException {
 		
 		BLLException blleException = new BLLException();
 		if (nom.length() < 2) {
@@ -65,7 +66,7 @@ public class RestaurantBLL {
 			throw blleException;
 		}
 		
-		Restaurant restaurant = new Restaurant(nom, adresse, description);
+		Restaurant restaurant = new Restaurant(nom, adresse, description, carte);
 		try {
 			dao.insert(restaurant);
 		} catch (DALException e) {

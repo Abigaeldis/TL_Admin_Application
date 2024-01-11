@@ -7,18 +7,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import bll.BLLException;
-import bll.RestaurantBLL;
 import bo.Carte;
-import bo.Restaurant;
 
 // CRUD
 public class CarteDAOJdbcImpl implements GenericDAO<Carte> {
 	private static final String TABLE_NAME = " cartes ";
 	
 	private static final String DELETE = "DELETE FROM"+ TABLE_NAME +" WHERE id = ?";
-	private static final String UPDATE = "UPDATE "+ TABLE_NAME +" SET nom = ?, id_restaurant = ? WHERE id = ?";
-	private static final String INSERT = "INSERT INTO "+ TABLE_NAME +" (nom, id_restaurant) VALUES (?,?)";
+	private static final String UPDATE = "UPDATE "+ TABLE_NAME +" SET nom = ? WHERE id = ?";
+	private static final String INSERT = "INSERT INTO "+ TABLE_NAME +" (nom) VALUES (?)";
 	private static final String SELECT_BY_ID = "SELECT * FROM "+ TABLE_NAME +" WHERE id = ?";
 	private static final String SELECT = "SELECT * FROM "+ TABLE_NAME;
 	
@@ -39,14 +36,9 @@ public class CarteDAOJdbcImpl implements GenericDAO<Carte> {
 				Carte carte = new Carte();
 				carte.setId(rs.getInt("id"));
 				carte.setNom(rs.getString("nom"));
-				
-				int idRestaurant = rs.getInt("id_restaurant");
-				RestaurantBLL restaurantBll = new RestaurantBLL();
-				Restaurant restaurant = restaurantBll.selectById(idRestaurant);
-				carte.setRestaurant(restaurant);
 				cartes.add(carte);
 			}
-		} catch (SQLException | BLLException e) {
+		} catch (SQLException e) {
 			throw new DALException("Impossible de recuperer les informations", e);
 		}
 		return cartes;
@@ -63,12 +55,8 @@ public class CarteDAOJdbcImpl implements GenericDAO<Carte> {
 				carte.setId(rs.getInt("id"));
 				carte.setNom(rs.getString("nom"));
 				
-				int idRestaurant = rs.getInt("id_restaurant");
-				RestaurantBLL restaurantBll = new RestaurantBLL();
-				Restaurant restaurant = restaurantBll.selectById(idRestaurant);
-				carte.setRestaurant(restaurant);
 			}
-		} catch (SQLException | BLLException e) {
+		} catch (SQLException e) {
 			throw new DALException("Impossible de recuperer les informations pour l'id "+ id, e);
 		}
 		return carte;
@@ -79,7 +67,6 @@ public class CarteDAOJdbcImpl implements GenericDAO<Carte> {
 			// L'ajout de RETURN_GENERATED_KEYS permet de récupérer l'id généré par la base
 			PreparedStatement ps = cnx.prepareStatement(INSERT, PreparedStatement.RETURN_GENERATED_KEYS);
 			ps.setString(1, carte.getNom());
-			ps.setInt(2, carte.getRestaurant().getId());
 			ps.executeUpdate();
 			
 			// Le bloc suivant permet de faire la récupération de l'id
@@ -97,7 +84,7 @@ public class CarteDAOJdbcImpl implements GenericDAO<Carte> {
 		try {
 			PreparedStatement ps = cnx.prepareStatement(UPDATE);
 			ps.setString(1, carte.getNom());
-			ps.setInt(2, carte.getRestaurant().getId());
+			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw new DALException("Impossible de mettre a jour les informations pour l'id "+ carte.getId(), e);
 		}
