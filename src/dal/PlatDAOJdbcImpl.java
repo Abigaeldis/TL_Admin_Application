@@ -68,6 +68,7 @@ public class PlatDAOJdbcImpl implements GenericDAO<Plat> {
 				plat.setId(rs.getInt("id"));
 				plat.setNom(rs.getString("nom"));
 				plat.setDescription(rs.getString("description"));
+				plat.setPrix(rs.getFloat("prix"));
 				plat.setType(rs.getString("type"));
 				
 				int idCarte = rs.getInt("id_carte");

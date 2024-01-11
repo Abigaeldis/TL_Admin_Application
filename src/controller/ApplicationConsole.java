@@ -1,8 +1,8 @@
 package controller;
-
+ 
+import java.util.ArrayList;
 import java.io.File;
 import java.io.FileNotFoundException;
-
 import java.util.List;
 
 import java.util.Scanner;
@@ -13,6 +13,7 @@ import bll.PlatBLL;
 import bll.RestaurantBLL;
 import bll.TableBLL;
 import bo.Carte;
+import bo.Plat;
 import bo.Restaurant;
 import dal.DALException;
 
@@ -55,7 +56,6 @@ public class ApplicationConsole {
 				else if (decision == 2) {
 					creerRestaurantAuto();
 				}
-				
 				//Ajouter un restaurant
 				break;
 			case 2:
@@ -65,7 +65,18 @@ public class ApplicationConsole {
 				//Supprimer un restaurant existant
 				break;
 			case 4:
-				//Créer une carte
+				System.out.println("Veuillez choisir l'action à réaliser");
+				System.out.println("1. Saisie de carte manuelle");
+				System.out.println("2. Saisie de carte automatique");
+				System.out.println("3. Retour au menu");
+				int decision_carte = scan.nextInt();
+				scan.nextLine();
+				if (decision_carte == 1) {
+					creerCarteManuel();;
+				}
+				else if (decision_carte == 2) {
+					creerCarteAuto();
+				}				
 				break;
 			case 5:
 				//Modifier une carte
@@ -115,8 +126,6 @@ public class ApplicationConsole {
 		scan.nextLine();
 		
 		carte = carteBll.selectById(carteSelectionner);
-		
-		
 			Restaurant restaurantAjoute = restaurantBll.insert(nom, adresse, description,carte);
 			System.out.println("Restaurant ajouté avec succès " + restaurantAjoute);
 		} catch (BLLException e) {
@@ -127,7 +136,208 @@ public class ApplicationConsole {
 			e.printStackTrace();
 		}
 	}
+
+	private static void creerCarteManuel() {
+		System.out.println("Vous avez choisi de créer une carte manuellement.");
+		Carte carteNouvelle = null;
+		System.out.println("Veuillez saisir le nom de la nouvelle carte.");
+		String nomEntree = scan.nextLine();
+		try {
+			carteNouvelle = carteBll.insert(nomEntree);
+			List<Plat> plats;
+			try {
+				boolean continuer = true;
+				plats = platBll.selectAll();
+				do{
+					System.out.println("Voulez-vous ajouter des entrées à votre carte ?");
+					System.out.println("1. Oui");
+					System.out.println("2. Non");
+					int saisieUtilisateur = scan.nextInt();
+					scan.nextLine();
+					if (saisieUtilisateur == 1) {
+						System.out.println("Quelle entrée souhaitez-vous ajouter à cette carte  ?");
+						System.out.println("\t0 : Je souhaite créer une nouvelle entrée.");
+						ajouterPlat(plats, carteNouvelle, "entrée");
+					}
+					else {
+						continuer = false;
+					}
+				} while(continuer);
+
+				continuer = true;
+				do{
+					System.out.println("Voulez-vous ajouter des plats à votre carte ?");
+					System.out.println("1. Oui");
+					System.out.println("2. Non");
+					int saisieUtilisateur = scan.nextInt();
+					scan.nextLine();
+					if (saisieUtilisateur == 1) {
+						System.out.println("Quel plat souhaitez-vous ajouter à cette carte  ?");
+						System.out.println("\t0 : Je souhaite créer un nouveau plat.");
+						ajouterPlat(plats, carteNouvelle, "plat");
+					}
+					else {
+						continuer = false;
+					}
+				} while(continuer);
+
+				continuer = true;
+				do{
+					System.out.println("Voulez-vous ajouter des desserts à votre carte ?");
+					System.out.println("1. Oui");
+					System.out.println("2. Non");
+					int saisieUtilisateur = scan.nextInt();
+					scan.nextLine();
+					if (saisieUtilisateur == 1) {
+						System.out.println("Quel dessert souhaitez-vous ajouter à cette carte  ?");
+						System.out.println("\t0 : Je souhaite créer un nouveau dessert.");
+						ajouterPlat(plats, carteNouvelle, "dessert");
+					}
+					else {
+						continuer = false;
+					}
+				} while(continuer);
+
+				continuer = true;
+				do{
+					System.out.println("Voulez-vous ajouter des boissons à votre carte ?");
+					System.out.println("1. Oui");
+					System.out.println("2. Non");
+					int saisieUtilisateur = scan.nextInt();
+					scan.nextLine();
+					if (saisieUtilisateur == 1) {
+						System.out.println("Quelle boisson souhaitez-vous ajouter à cette carte  ?");
+						System.out.println("\t0 : Je souhaite créer une nouvelle boisson.");
+						ajouterPlat(plats, carteNouvelle, "boisson");
+					}
+					else {
+						continuer = false;
+					}
+				} while(continuer);
+			} catch (BLLException e) {
+				e.printStackTrace();
+			}
+			
+			System.out.println("Vous avez créer la carte suivante :");
+			afficherCarte(carteNouvelle);
+			
+			affecterCarteRestaurant(carteNouvelle);
+
+		} catch (BLLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	
+
+	private static void creerCarteAuto() {}
+
+	private static void affecterCarteRestaurant(Carte carteNouvelle) {
+		System.out.println("A combien de restaurant voulez-vous affectez cette carte ?");
+		int nbAffectation = scan.nextInt();
+		scan.nextLine();
+		if (nbAffectation > 0) {
+			System.out.println("Saisissez successivement les numéros des restaurants auxquels vous voulez affecter cette carte.");
+			for (int i = 0; i < nbAffectation ; i++) {
+				System.out.println("Saisie " + (int) (i+1) + " :");
+				int idRestaurant = scan.nextInt();
+				scan.nextLine();
+				try {
+					Restaurant restaurant = restaurantBll.selectById(idRestaurant);
+					restaurant.setCarte(carteNouvelle);
+					restaurantBll.update(restaurant);
+					System.out.println("Carte ajoutée avec succès dans le restaurant " + restaurant.getId());
+				} catch (BLLException e) {
+					System.out.println("Une erreur est survenue :");
+					for (String erreur : e.getErreurs()) {
+						System.out.println("\t" + erreur);
+					}
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	private static void ajouterPlat(List<Plat> plats, Carte carteNouvelle, String typePlat) throws BLLException {
+		for (Plat current : plats) {
+			if (current.getType().equals(typePlat)) {
+				System.out.println("\t" + current.getId() + ". " + current);
+			}
+		}
+		int saisiePlat= scan.nextInt();
+		scan.nextLine();
+		if (saisiePlat==0) {
+			System.out.println("Vous avez choisi la création d'un nouvel item de type " + typePlat);
+
+			System.out.println("Veuillez saisir son nom");
+			String nomPlat = scan.nextLine();
+
+			System.out.println("Veuillez saisir sa description");
+			String descriptionPlat = scan.nextLine();
+
+			System.out.println("Veuillez saisir son prix (ex. 12,5)");
+			Float prix = scan.nextFloat();
+			scan.nextLine();
+
+			Plat platAjoute = platBll.insert(nomPlat, descriptionPlat, prix,typePlat,carteNouvelle);
+			System.out.println("L'item suivant a été ajouté : " + platAjoute);
+
+		} else {
+			Plat platADupliquer = platBll.selectById(saisiePlat);
+			Plat platAjoute = platBll.insert(platADupliquer.getNom(), platADupliquer.getDescription(), platADupliquer.getPrix(),typePlat,carteNouvelle);			
+			System.out.println("L'item suivant a été ajoutée : " + platAjoute);
+		}
+	}
+	
+	private static void afficherCarte(Carte carteNouvelle) {
+		System.out.println("Carte n°"+carteNouvelle.getId() + " : " + carteNouvelle.getNom());
+		List<Plat> items;
+		List<Plat> entrees = new ArrayList<>();;
+		List<Plat> plats = new ArrayList<>();;
+		List<Plat> desserts = new ArrayList<>();;
+		List<Plat> boissons = new ArrayList<>();;
+		try {
+			items = platBll.selectAll();
+			for (Plat current : items) {
+				if (current.getCarte().getId()==carteNouvelle.getId()) {
+					switch (current.getType()) {
+					case "entrée" :
+						entrees.add(current);
+						break;
+					case "plat" :
+						plats.add(current);
+						break;
+					case "dessert" :
+						desserts.add(current);
+						break;
+					case "boisson" :
+						boissons.add(current);
+						break;
+					default :
+						System.out.println(current);
+						break;
+					}
+				}
+			}
+			System.out.println("Entrées :");
+			for (Plat current : entrees) {
+				System.out.println(current);
+			}
+			System.out.println("Plats :");
+			for (Plat current : plats) {
+				System.out.println(current);
+			}
+			System.out.println("Desserts :");
+			for (Plat current : desserts) {
+				System.out.println(current);
+			}
+			System.out.println("Boissons :");
+			for (Plat current : boissons) {
+				System.out.println(current);
+			}
+	
+      
 	private static void creerRestaurantAuto() {
 	    try {
 	        System.out.println("Vous avez choisi d'ajouter des restaurants automatiquement");
@@ -223,5 +433,4 @@ public class ApplicationConsole {
 			e.printStackTrace();
 		}
 	}
-
 }
