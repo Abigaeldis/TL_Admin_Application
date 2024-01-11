@@ -1,4 +1,5 @@
 package controller;
+import java.util.List;
 import java.util.Scanner;
 
 import bll.BLLException;
@@ -6,6 +7,7 @@ import bll.PlatBLL;
 import bll.RestaurantBLL;
 import bll.TableBLL;
 import bo.Restaurant;
+import dal.DALException;
 
 public class ApplicationConsole {
 	private static Scanner scan;
@@ -13,7 +15,7 @@ public class ApplicationConsole {
 	private static RestaurantBLL restaurantBll;
 	private static PlatBLL platBll;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws BLLException {
 		System.out.println("Bienvenue dans notre application d'administration.\n");
 		scan = new Scanner(System.in);
 		try {
@@ -48,7 +50,7 @@ public class ApplicationConsole {
 				//Ajouter un restaurant
 				break;
 			case 2:
-				//Modifier un restaurant existant
+				modifierRestaurant();
 				break;
 			case 3:
 				//Supprimer un restaurant existant
@@ -111,5 +113,60 @@ public class ApplicationConsole {
 	
 	private static void creerRestaurantAuto() {
 		
+	}
+	
+	private static void modifierRestaurant() throws BLLException { 
+		
+		System.out.println("Vous avez choisi de modifier un restaurant existant");
+		listerRestaurant();
+		
+		System.out.println("Veuillez sélectionner l'id du restaurant à modifier");
+		//Demande l'id du restaurant et execute un selectById       
+        int restaurantId = scan.nextInt();
+        scan.nextLine();
+        try {
+			restaurantBll.selectById(restaurantId);
+		} catch (BLLException e) {
+			throw new BLLException("Echec de la recuperation du restaurant d'id " + restaurantId, e);
+		}
+
+        // Demander à l'utilisateur le nouveau nom du restaurant
+        System.out.print("Entrez le nouveau nom du restaurant : ");
+        String nouveauNom = scan.nextLine();
+
+        // Demander à l'utilisateur la nouvelle adresse du restaurant
+        System.out.print("Entrez la nouvelle adresse du restaurant : ");
+        String nouvelleAdresse = scan.nextLine();
+
+        // Demander à l'utilisateur la nouvelle description du restaurant
+        System.out.print("Entrez la nouvelle description du restaurant : ");
+        String nouvelleDescription = scan.nextLine();
+
+        // Créer un objet Restaurant avec les nouvelles informations
+        Restaurant restaurantModifie = new Restaurant(restaurantId, nouveauNom, nouvelleAdresse, nouvelleDescription);
+
+        // Update pour modifier le restaurant dans la base de données
+        try {
+             restaurantBll.update(restaurantModifie);
+            System.out.println("Restaurant mis à jour avec succès !");
+        } catch (BLLException e) {
+            System.err.println("Erreur lors de la mise à jour du restaurant : " + e.getMessage());
+        }
+		
+        
+		
+	}
+	/*
+	 * 
+	 */
+	private static void listerRestaurant() {
+		try {
+			List<Restaurant> restaurants = restaurantBll.selectAll();
+			for (Restaurant current : restaurants) {
+				System.out.println("\t" + current.getId() + ". " + current);
+			}
+		} catch (BLLException e) {
+			e.printStackTrace();
+		}
 	}
 }
