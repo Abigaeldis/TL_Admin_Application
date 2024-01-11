@@ -1,5 +1,10 @@
 package controller;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import java.util.List;
+
 import java.util.Scanner;
 
 import bll.BLLException;
@@ -124,8 +129,45 @@ public class ApplicationConsole {
 	}
 	
 	private static void creerRestaurantAuto() {
-		
+	    try {
+	        System.out.println("Vous avez choisi d'ajouter des restaurants automatiquement");
+
+	        System.out.println("Veuillez saisir le chemin du fichier restaurant");
+//	        String filePath = scan.nextLine();
+	         String filePath= "restaurant_data.csv";
+
+	        try (Scanner fileScanner = new Scanner(new File(filePath))) {
+	            // Skip the header line
+	            if (fileScanner.hasNext()) {
+	                fileScanner.nextLine();
+	            }
+
+	            while (fileScanner.hasNext()) {
+	                String line = fileScanner.nextLine();
+	                String[] restaurantInfo = line.split(",");
+
+	                // Assuming the array contains: [name, address, description, carteId]
+	                String nom = restaurantInfo[0];
+	                String addresse = restaurantInfo[1];
+	                String description = restaurantInfo[2];
+	                int carteId = Integer.parseInt(restaurantInfo[3].trim());
+
+	                
+	                Carte carte = carteBll.selectById(carteId);
+
+
+	                Restaurant restaurantAjoute = restaurantBll.insert(nom, addresse, description, carte);
+	                System.out.println("Restaurant ajouté avec succès: " + restaurantAjoute);
+	            }
+	        }
+	    } catch (FileNotFoundException | BLLException e) {
+	        System.out.println("Une erreur est survenue :");
+	        e.printStackTrace();
+	    }
 	}
+
+
+
 	
 	private static void modifierRestaurant() throws BLLException { 
 		
@@ -181,4 +223,5 @@ public class ApplicationConsole {
 			e.printStackTrace();
 		}
 	}
+
 }
