@@ -293,10 +293,10 @@ public class ApplicationConsole {
 	private static void afficherCarte(Carte carteNouvelle) {
 		System.out.println("Carte n°"+carteNouvelle.getId() + " : " + carteNouvelle.getNom());
 		List<Plat> items;
-		List<Plat> entrees = new ArrayList<>();;
-		List<Plat> plats = new ArrayList<>();;
-		List<Plat> desserts = new ArrayList<>();;
-		List<Plat> boissons = new ArrayList<>();;
+		List<Plat> entrees = new ArrayList<>();
+		List<Plat> plats = new ArrayList<>();
+		List<Plat> desserts = new ArrayList<>();
+		List<Plat> boissons = new ArrayList<>();
 		try {
 			items = platBll.selectAll();
 			for (Plat current : items) {
@@ -336,7 +336,11 @@ public class ApplicationConsole {
 			for (Plat current : boissons) {
 				System.out.println(current);
 			}
-	
+		} catch (BLLException e) {
+	        System.out.println("Une erreur est survenue :");
+	        e.printStackTrace();
+	    }
+	}
       
 	private static void creerRestaurantAuto() {
 	    try {
