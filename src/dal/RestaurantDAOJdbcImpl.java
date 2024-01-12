@@ -14,8 +14,13 @@ public class RestaurantDAOJdbcImpl implements GenericDAO<Restaurant> {
 	private static final String TABLE_NAME = " restaurants ";
 	
 	private static final String DELETE = "DELETE FROM"+ TABLE_NAME +" WHERE id = ?";
+<<<<<<< Updated upstream
 	private static final String UPDATE = "UPDATE "+ TABLE_NAME +" SET nom = ?, adresse = ?, description = ? WHERE id = ?";
 	private static final String INSERT = "INSERT INTO "+ TABLE_NAME +" (nom, adresse, description) VALUES (?,?,?)";
+=======
+	private static final String UPDATE = "UPDATE "+ TABLE_NAME +" SET nom = ?, adresse = ?, description = ?, id_carte = ? WHERE id = ?";
+	private static final String INSERT = "INSERT INTO "+ TABLE_NAME +" (nom, adresse, description,id_carte) VALUES (?,?,?,?)";
+>>>>>>> Stashed changes
 	private static final String SELECT_BY_ID = "SELECT * FROM "+ TABLE_NAME +" WHERE id = ?";
 	private static final String SELECT = "SELECT * FROM "+ TABLE_NAME;
 	
@@ -92,7 +97,8 @@ public class RestaurantDAOJdbcImpl implements GenericDAO<Restaurant> {
 			ps.setString(1, restaurant.getNom());
 			ps.setString(2, restaurant.getAdresse());
 			ps.setString(3, restaurant.getDescription());
-			ps.setInt(4, restaurant.getId());
+			ps.setInt(4, restaurant.getCarte().getId());
+			ps.setInt(5, restaurant.getId());
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw new DALException("Impossible de mettre a jour les informations pour l'id "+ restaurant.getId(), e);

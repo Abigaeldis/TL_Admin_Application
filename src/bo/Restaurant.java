@@ -13,7 +13,7 @@ public class Restaurant {
 	public Restaurant() {
 	}
 
-	public Restaurant(int id, String nom, String adresse, String description) {
+	public Restaurant(int id, String nom, String adresse, String description, int carte) {
 		this.id = id;
 		this.nom = nom;
 		this.adresse = adresse;
