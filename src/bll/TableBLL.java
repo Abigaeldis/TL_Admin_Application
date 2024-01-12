@@ -1,5 +1,6 @@
 package bll;
 
+import java.util.Arrays;
 import java.util.List;
 
 import bo.Restaurant;
@@ -37,6 +38,13 @@ public class TableBLL {
 	
 	public Table insert(int numTable, int capaciteTable, String etat, Restaurant restaurant) throws BLLException {
 		Table table = new Table(numTable, capaciteTable, etat, restaurant);
+		BLLException blleException = new BLLException();
+		
+		List<String> valeursValides = Arrays.asList("Libre", "Occupée", "Occupee", "Réservée", "Reservee");
+		if (!valeursValides.contains(etat)) {
+			blleException.ajouterErreur("L'état de la table doit valoir : Libre, Occupée ou Réservée");
+		}
+		
 		try {
 			dao.insert(table);
 		} catch (DALException e) {

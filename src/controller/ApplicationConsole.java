@@ -1,5 +1,4 @@
 package controller;
-import java.util.ArrayList;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalTime;
@@ -118,6 +117,7 @@ public class ApplicationConsole {
 		try {
 			System.out.println("Vous avez choisi d'ajouter un restaurant");
 
+
 			System.out.println("Veuillez saisir le nom du restaurant");
 			String nom = scan.nextLine();
 
@@ -215,6 +215,7 @@ public class ApplicationConsole {
 			} while(continuer);
 
 			System.out.println("Restaurant ajouté avec succès " + restaurantAjoute);
+
 		} catch (BLLException e) {
 			System.out.println("Une erreur est survenue :");
 			for (String erreur : e.getErreurs()) {
@@ -258,8 +259,13 @@ public class ApplicationConsole {
 					System.out.println("Restaurant ajouté avec succès: " + restaurantAjoute);
 				}
 			}
-		} catch (FileNotFoundException | BLLException e) {
+		} catch (FileNotFoundException e) {
 			System.out.println("Une erreur est survenue :");
+			e.printStackTrace();
+		} catch (BLLException e) {
+			for (String erreur : e.getErreurs()) {
+				System.out.println("\t" + erreur);
+			}
 			e.printStackTrace();
 		}
 	}
@@ -309,7 +315,11 @@ public class ApplicationConsole {
 			restaurantBll.update(restaurantAModifier);
 			System.out.println("Restaurant mis à jour avec succès !");
 		} catch (BLLException e) {
-			System.err.println("Erreur lors de la mise à jour du restaurant : " + e.getMessage());
+			System.out.println("Une erreur est survenue :");
+			for (String erreur : e.getErreurs()) {
+				System.out.println("\t" + erreur);
+			}
+			e.printStackTrace();
 		}
 	}
 
@@ -321,7 +331,6 @@ public class ApplicationConsole {
 			System.out.println("Veuillez sélectionner l'id du restaurant à supprimer");
 			int restaurantId = scan.nextInt();
 			scan.nextLine();
-
 			// Display the selected restaurant for confirmation
 			try {
 				Restaurant restaurantToDelete = restaurantBll.selectById(restaurantId);
@@ -349,6 +358,7 @@ public class ApplicationConsole {
 			System.err.println("Erreur lors de la suppression du restaurant : " + e.getMessage());
 			e.printStackTrace();
 		}
+
 	}
 
 
@@ -439,7 +449,6 @@ public class ApplicationConsole {
 			affecterCarteRestaurant(carteNouvelle);
 
 		} catch (BLLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -491,7 +500,10 @@ public class ApplicationConsole {
 				System.out.println("Aucune carte trouvée avec l'id " + carteId);
 			}
 		} catch (BLLException e) {
-			System.err.println("Erreur lors de la mise à jour de la carte : " + e.getMessage());
+			System.out.println("Une erreur est survenue :");
+			for (String erreur : e.getErreurs()) {
+				System.out.println("\t" + erreur);
+			}
 			e.printStackTrace();
 		}
 	}
@@ -528,7 +540,7 @@ public class ApplicationConsole {
 			Plat platAjoute = platBll.insert(platADupliquer.getNom(), platADupliquer.getDescription(), platADupliquer.getPrix(),platADupliquer.getType(),carte);			
 			System.out.println("L'item suivant a été ajoutée : " + platAjoute);
 		}
-		System.out.println("Plat ajouté avec succès !");
+			System.out.println("Plat ajouté avec succès !");
 	}
 
 	private static void listeCartes() {
@@ -573,9 +585,15 @@ public class ApplicationConsole {
 				afficherCarte(carteAjoute);
 				affecterCarteRestaurant(carteAjoute);
 			}
-		} catch (FileNotFoundException | BLLException e) {
+		} catch (FileNotFoundException e) {
 			System.out.println("Une erreur est survenue :");
 			e.printStackTrace();
+		} catch (BLLException e) {
+			for (String erreur : e.getErreurs()) {
+				System.out.println("\t" + erreur);
+			}
+			e.printStackTrace();
+
 		}
 	}
 
