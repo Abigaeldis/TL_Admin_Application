@@ -448,6 +448,7 @@ private static void modifierCarte() {
 		scan.nextLine();
 		if (nbAffectation > 0) {
 			System.out.println("Saisissez successivement les numéros des restaurants auxquels vous voulez affecter cette carte.");
+			listerRestaurant();
 			for (int i = 0; i < nbAffectation ; i++) {
 				System.out.println("Saisie " + (int) (i+1) + " :");
 				int idRestaurant = scan.nextInt();
@@ -497,6 +498,7 @@ private static void modifierCarte() {
 			Plat platADupliquer = platBll.selectById(saisiePlat);
 			Plat platAjoute = platBll.insert(platADupliquer.getNom(), platADupliquer.getDescription(), platADupliquer.getPrix(),typePlat,carteNouvelle);			
 			System.out.println("L'item suivant a été ajoutée : " + platAjoute);
+			System.out.println("********************");
 		}
 	}
 
