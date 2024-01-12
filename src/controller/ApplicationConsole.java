@@ -325,8 +325,9 @@ public class ApplicationConsole {
 				afficherCarte(carte);
 				System.out.println("Que souhaitez-vous modifier sur cette carte ?");
 				System.out.println("1. Modification du nom de la carte");
-				System.out.println("2. Modification d'un item de la carte");
-				System.out.println("3.Suppression d'un item de la carte");
+				System.out.println("2. Ajout d'un item à la carte");
+				System.out.println("3. Modification d'un item de la carte");
+				System.out.println("4. Suppression d'un item de la carte");
 				int saisie_utilisateur = scan.nextInt();
 				scan.nextLine();
 				switch (saisie_utilisateur) {
@@ -338,12 +339,15 @@ public class ApplicationConsole {
 					System.out.println("Carte mise à jour avec succès !");
 					break;
 				case 2 : 
-					modifierPlat(carte);
-					System.out.println("Carte mise à jour avec succès !");
+					ajouterItemACarte(carte);
 					break;
 				case 3 : 
+					modifierPlat(carte);
+					System.out.println("Plat modifié avec succès !");
+					break;
+				case 4 : 
 					suppressionPlat(carte);
-					System.out.println("Carte mise à jour avec succès !");
+					System.out.println("Plat supprimé avec succès !");
 					break;
 				default:
 					System.out.println("Veuillez saisir un nombre entre 1 et 3.");
@@ -356,6 +360,41 @@ public class ApplicationConsole {
 			System.err.println("Erreur lors de la mise à jour de la carte : " + e.getMessage());
 			e.printStackTrace();
 		}
+	}
+
+	private static void ajouterItemACarte(Carte carte) throws BLLException {
+		for (Plat current : platBll.selectAll()) {
+			if (current.getCarte().getId() == carte.getId()) {
+				System.out.println("\t" + current.getId() + ". " + current);
+			}
+		}
+		int saisiePlat= scan.nextInt();
+		scan.nextLine();
+		if (saisiePlat==0) {
+			System.out.println("Vous avez choisi la création d'un nouvel item");
+
+			System.out.println("Veuillez saisir son nom");
+			String nomPlat = scan.nextLine();
+
+			System.out.println("Veuillez saisir sa description");
+			String descriptionPlat = scan.nextLine();
+
+			System.out.println("Veuillez saisir son prix (ex. 12,5)");
+			Float prix = scan.nextFloat();
+			scan.nextLine();
+
+			System.out.println("Veuillez saisir son type (entrée, plat, dessert ou boisson)");
+			String typePlat = scan.nextLine();
+			
+			Plat platAjoute = platBll.insert(nomPlat, descriptionPlat, prix,typePlat,carte);
+			System.out.println("L'item suivant a été ajouté : " + platAjoute);
+
+		} else {
+			Plat platADupliquer = platBll.selectById(saisiePlat);
+			Plat platAjoute = platBll.insert(platADupliquer.getNom(), platADupliquer.getDescription(), platADupliquer.getPrix(),platADupliquer.getType(),carte);			
+			System.out.println("L'item suivant a été ajoutée : " + platAjoute);
+		}
+		System.out.println("Plat ajouté avec succès !");
 	}
 
 	private static void listeCartes() {
