@@ -19,6 +19,7 @@ import bo.Plat;
 import bo.Restaurant;
 import bo.Table;
 
+
 public class ApplicationConsole {
 	private static Scanner scan;
 	private static TableBLL tableBll;
@@ -65,7 +66,7 @@ public class ApplicationConsole {
 				modifierRestaurant();
 				break;
 			case 3:
-				//Supprimer un restaurant existant
+				supprimerRestaurant();
 				break;
 			case 4:
 				System.out.println("Veuillez choisir l'action à réaliser");
@@ -99,12 +100,12 @@ public class ApplicationConsole {
 	}
 
 	private static int afficherMenu() {
-		System.out.println("1. Ajouter un restaurant");
-		System.out.println("2. Modifier un restaurant existant");
-		System.out.println("3. Supprimer un restaurant existant");
-		System.out.println("4. Créer une carte");
-		System.out.println("5. Modifier une carte");
-		System.out.println("6. Quitter l'application");
+		System.out.println("\t 1. Ajouter un restaurant");
+		System.out.println("\t 2. Modifier un restaurant existant");
+		System.out.println("\t 3. Supprimer un restaurant existant");
+		System.out.println("\t 4. Créer une carte");
+		System.out.println("\t 5. Modifier une carte");
+		System.out.println("\t 6. Quitter l'application");
 		int choix = scan.nextInt();
 		scan.nextLine();
 		return choix;
@@ -116,6 +117,7 @@ public class ApplicationConsole {
 		try {
 			System.out.println("Vous avez choisi d'ajouter un restaurant");
 
+
 			System.out.println("Veuillez saisir le nom du restaurant");
 			String nom = scan.nextLine();
 
@@ -126,7 +128,7 @@ public class ApplicationConsole {
 			String description = scan.nextLine();
 
 			System.out.println("Quelle carte voulez-vous attribuer au restaurant");
-			System.out.println("Liste des cartes");
+			listeCartes();
 			int carteSelectionner = scan.nextInt();
 			scan.nextLine();
 
@@ -136,40 +138,84 @@ public class ApplicationConsole {
 			Restaurant restaurantAjoute = restaurantBll.insert(nom, adresse, description, carte);
 
 			// Create and Insert Horaire with associated Restaurant
-			System.out.println("Veuillez saisir un jour");
-			String jour = scan.nextLine();
+			System.out.println("Veuillez ajouter des horaires à votre restaurant.");
+			boolean continuer = true;
+			do {
+				System.out.println("Veuillez saisir un jour (ex. Lundi)");
+				String jour = scan.nextLine();
 
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+				LocalTime heureDeDebut = null;
+				LocalTime heureDeFin = null;
+				boolean isValidInput = false;
 
-			System.out.println("Veuillez saisir l'heure de début de service");
-			String inputHeureDeDebut = scan.nextLine();
-			LocalTime heureDeDebut = LocalTime.parse(inputHeureDeDebut, formatter);
+				do {
+					try {
+						System.out.println("Veuillez saisir l'heure de début de service (ex. 12:30)");
+						String inputHeureDeDebut = scan.nextLine();
+						heureDeDebut = LocalTime.parse(inputHeureDeDebut, formatter);
+						isValidInput = true; // Break the loop if parsing is successful
+					} catch (Exception e) {
+						System.out.println("Format d'heure incorrect. Veuillez saisir l'heure au format 24 heures (ex. 12:30) n'oubliez pas les :");
+					}
+				} while (!isValidInput);
+				
+				isValidInput = false;
+				
+				do {
+					try {
+						System.out.println("Veuillez saisir l'heure de fin de service (ex. 14:30)");
+						String inputHeureDeFin = scan.nextLine();
+						heureDeFin = LocalTime.parse(inputHeureDeFin, formatter);
+						isValidInput = true;
+						} catch (Exception e) {
+							System.out.println("Format d'heure incorrect. Veuillez saisir l'heure au format 24 heures (ex. 12:30) n'oubliez pas les :");
+						}
+				} while (!isValidInput);
 
-			System.out.println("Veuillez saisir l'heure de fin de service");
-			String inputHeureDeFin = scan.nextLine();
-			LocalTime heureDeFin = LocalTime.parse(inputHeureDeFin, formatter);
+				System.out.println("Veuillez saisir le créneau (MIDI ou SOIR)");
+				String creneau = scan.nextLine();
 
-			System.out.println("Veuillez saisir le créneau");
-			String creneau = scan.nextLine();
+				Horaire horaireAjoute = horaireBll.insert(jour, heureDeDebut, heureDeFin, creneau, restaurantAjoute);
+				System.out.println("Horaire du restaurant ajouté avec succès " + horaireAjoute);
+				System.out.println("Voulez-vous ajouter un nouvel horaire pour ce restaurant ?");
+				System.out.println("1. Oui");
+				System.out.println("2. Non");
+				int saisieChoix = scan.nextInt();
+				scan.nextLine();
+				if (saisieChoix == 2){
+					continuer = false;
+				}
+			} while(continuer);
 
-			Horaire horaireAjoute = horaireBll.insert(jour, heureDeDebut, heureDeFin, creneau, restaurantAjoute);
+			System.out.println("Veuillez ajouter des tables à votre restaurant.");
+			continuer = true;
+			do {
+				System.out.println("Veuillez saisir le numéro de table");
+				int numTable = scan.nextInt();
+				scan.nextLine();
 
-			System.out.println("Veuillez saisir le numéro de table");
-			int numTable = scan.nextInt();
-			scan.nextLine();
+				System.out.println("Veuillez saisir la capacité de la table");
+				int capaciteTable = scan.nextInt();
+				scan.nextLine();
 
-			System.out.println("Veuillez saisir la capacité de la table");
-			int capaciteTable = scan.nextInt();
-			scan.nextLine();
+				//		        System.out.println("Veuillez saisir l'état de la table"); // On met par défaut l'état Libre
+				//		        String etat = scan.nextLine();
 
-			System.out.println("Veuillez saisir l'état de la table");
-			String etat = scan.nextLine();
-
-			Table tableAjoutee = tableBll.insert(numTable, capaciteTable, etat, restaurantAjoute);
+				Table tableAjoutee = tableBll.insert(numTable, capaciteTable, "Libre", restaurantAjoute);
+				System.out.println("Table du restaurant ajoutée avec succès " + tableAjoutee);
+				System.out.println("Voulez-vous ajouter une nouvelle table pour ce restaurant ?");
+				System.out.println("1. Oui");
+				System.out.println("2. Non");
+				int saisieChoix = scan.nextInt();
+				scan.nextLine();
+				if (saisieChoix == 2){
+					continuer = false;
+				}
+			} while(continuer);
 
 			System.out.println("Restaurant ajouté avec succès " + restaurantAjoute);
-			System.out.println("Horaire du restaurant ajouté avec succès " + horaireAjoute);
-			System.out.println("Table du restaurant ajoutée avec succès " + tableAjoutee);
+
 		} catch (BLLException e) {
 			System.out.println("Une erreur est survenue :");
 			for (String erreur : e.getErreurs()) {
@@ -224,7 +270,7 @@ public class ApplicationConsole {
 		}
 	}
 
-	private static void modifierRestaurant() throws BLLException { 
+	private static void modifierRestaurant() throws BLLException {
 
 		System.out.println("Vous avez choisi de modifier un restaurant existant");
 		listerRestaurant();
@@ -232,9 +278,10 @@ public class ApplicationConsole {
 		System.out.println("Veuillez sélectionner l'id du restaurant à modifier");
 		//Demande l'id du restaurant et execute un selectById       
 		int restaurantId = scan.nextInt();
-		scan.nextLine();
+		Restaurant restaurantAModifier = null;
 		try {
-			restaurantBll.selectById(restaurantId);
+			restaurantAModifier = restaurantBll.selectById(restaurantId);
+			scan.nextLine();
 		} catch (BLLException e) {
 			throw new BLLException("Echec de la recuperation du restaurant d'id " + restaurantId, e);
 		}
@@ -242,21 +289,30 @@ public class ApplicationConsole {
 		// Demander à l'utilisateur le nouveau nom du restaurant
 		System.out.print("Entrez le nouveau nom du restaurant : ");
 		String nouveauNom = scan.nextLine();
+		restaurantAModifier.setNom(nouveauNom);
 
 		// Demander à l'utilisateur la nouvelle adresse du restaurant
 		System.out.print("Entrez la nouvelle adresse du restaurant : ");
 		String nouvelleAdresse = scan.nextLine();
+		restaurantAModifier.setAdresse(nouvelleAdresse);
 
 		// Demander à l'utilisateur la nouvelle description du restaurant
 		System.out.print("Entrez la nouvelle description du restaurant : ");
 		String nouvelleDescription = scan.nextLine();
+		restaurantAModifier.setDescription(nouvelleDescription);
 
-		// Créer un objet Restaurant avec les nouvelles informations
-		Restaurant restaurantModifie = new Restaurant(restaurantId, nouveauNom, nouvelleAdresse, nouvelleDescription);
+		// Demander à l'utilisateur la carte qu'il souhaite rattacher
+		System.out.print("Entrez la nouvelle carte : ");
+		System.out.println();
+		listeCartes();
+		int idCarte = scan.nextInt();
+		scan.nextLine();
+		restaurantAModifier.setCarte(carteBll.selectById(idCarte));
+
 
 		// Update pour modifier le restaurant dans la base de données
 		try {
-			restaurantBll.update(restaurantModifie);
+			restaurantBll.update(restaurantAModifier);
 			System.out.println("Restaurant mis à jour avec succès !");
 		} catch (BLLException e) {
 			System.out.println("Une erreur est survenue :");
@@ -265,8 +321,46 @@ public class ApplicationConsole {
 			}
 			e.printStackTrace();
 		}
+	}
+
+	private static void supprimerRestaurant() {
+		try {
+			System.out.println("Vous avez choisi de supprimer un restaurant existant");
+			listerRestaurant();
+
+			System.out.println("Veuillez sélectionner l'id du restaurant à supprimer");
+			int restaurantId = scan.nextInt();
+			scan.nextLine();
+			// Display the selected restaurant for confirmation
+			try {
+				Restaurant restaurantToDelete = restaurantBll.selectById(restaurantId);
+				System.out.println("Vous avez choisi de supprimer le restaurant suivant :");
+				System.out.println(restaurantToDelete);
+
+				// Ask for confirmation
+				System.out.println("Voulez-vous vraiment supprimer ce restaurant ? (1. Oui / 2. Non)");
+				int confirmation = scan.nextInt();
+				scan.nextLine();
+
+				if (confirmation == 1) {
+					// Call the BLL method to delete the restaurant
+					restaurantBll.delete(restaurantId);
+					System.out.println("Restaurant supprimé avec succès !");
+				} else {
+					System.out.println("Suppression annulée.");
+				}
+
+			} catch (BLLException e) {
+				System.err.println("Erreur lors de la récupération du restaurant à supprimer : " + e.getMessage());
+			}
+
+		} catch (Exception e) {
+			System.err.println("Erreur lors de la suppression du restaurant : " + e.getMessage());
+			e.printStackTrace();
+		}
 
 	}
+
 
 
 	private static void creerCarteManuel() {
@@ -499,6 +593,7 @@ public class ApplicationConsole {
 				System.out.println("\t" + erreur);
 			}
 			e.printStackTrace();
+
 		}
 	}
 
