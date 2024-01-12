@@ -15,6 +15,10 @@ public class BLLException extends Exception {
 		super(message, cause);
 	}
 	
+	public BLLException(String message) {
+		super(message);
+	}
+	
 	public void ajouterErreur(String erreur) {
 		erreurs.add(erreur);
 	}
