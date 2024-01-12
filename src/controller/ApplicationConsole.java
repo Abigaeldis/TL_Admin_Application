@@ -79,7 +79,7 @@ public class ApplicationConsole {
 				}				
 				break;
 			case 5:
-				//Modifier une carte
+				modifierCarte();
 				break;
 			case 6 :
 				System.out.println("Vous avez quitté l'application.");
@@ -121,7 +121,7 @@ public class ApplicationConsole {
 		System.out.println("Veuillez saisir une description pour votre restaurant");
 		String description = scan.nextLine();
 		System.out.println("Qu'elle carte voulez vous attribuer au restaurant");
-		System.out.println("Liste des cartes");
+		listeCartes();
 		int carteSelectionner = scan.nextInt();
 		scan.nextLine();
 		
@@ -232,6 +232,46 @@ public class ApplicationConsole {
 	
 
 	private static void creerCarteAuto() {}
+	
+	private static void modifierCarte() {
+	    System.out.println("Vous avez choisi de modifier une carte existante");
+	    listeCartes();
+
+	    System.out.println("Veuillez sélectionner l'id de la carte à modifier");
+	    int carteId = scan.nextInt();
+	    scan.nextLine();
+
+	    try {
+	        Carte carte = carteBll.selectById(carteId);
+	        if (carte != null) {
+	            System.out.print("Entrez le nouveau nom de la carte : ");
+	            String nouveauNomCarte = scan.nextLine();
+	            
+	            carte.setNom(nouveauNomCarte);
+	           
+	            carteBll.update(carte);
+
+	            System.out.println("Carte mise à jour avec succès !");
+	        } else {
+	            System.out.println("Aucune carte trouvée avec l'id " + carteId);
+	        }
+	    } catch (BLLException e) {
+	        System.err.println("Erreur lors de la mise à jour de la carte : " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	}
+
+	private static void listeCartes() {
+	    try {
+	        List<Carte> cartes = carteBll.selectAll();
+	        for (Carte current : cartes) {
+	            System.out.println("\t" + current.getId() + ". " + current.getNom());
+	        }
+	    } catch (BLLException e) {
+	        e.printStackTrace();
+	    }
+	}
+
 
 	private static void affecterCarteRestaurant(Carte carteNouvelle) {
 		System.out.println("A combien de restaurant voulez-vous affectez cette carte ?");
