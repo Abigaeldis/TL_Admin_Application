@@ -1,4 +1,5 @@
 package controller;
+
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.io.File;
@@ -168,6 +169,7 @@ public class ApplicationConsole {
 
 			System.out.println("Quelle carte voulez-vous attribuer au restaurant");
 			listeCartes();
+
 			int carteSelectionner = 0;
 			boolean saisieValide = false;
 	        do {
@@ -180,6 +182,7 @@ public class ApplicationConsole {
 	                scan.next(); // Effacer la saisie incorrecte du scanner
 	            }
 	        } while (!saisieValide);
+
 			scan.nextLine();
 
 			carte = carteBll.selectById(carteSelectionner);
@@ -196,13 +199,34 @@ public class ApplicationConsole {
 
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
-				System.out.println("Veuillez saisir l'heure de début de service (ex. 12:30)");
-				String inputHeureDeDebut = scan.nextLine();
-				LocalTime heureDeDebut = LocalTime.parse(inputHeureDeDebut, formatter);
+				LocalTime heureDeDebut = null;
+				LocalTime heureDeFin = null;
+				boolean isValidInput = false;
 
-				System.out.println("Veuillez saisir l'heure de fin de service (ex. 14:30)");
-				String inputHeureDeFin = scan.nextLine();
-				LocalTime heureDeFin = LocalTime.parse(inputHeureDeFin, formatter);
+				do {
+					try {
+						System.out.println("Veuillez saisir l'heure de début de service (ex. 12:30)");
+						String inputHeureDeDebut = scan.nextLine();
+						heureDeDebut = LocalTime.parse(inputHeureDeDebut, formatter);
+						isValidInput = true; // Break the loop if parsing is successful
+					} catch (Exception e) {
+						System.out.println("Format d'heure incorrect. Veuillez saisir l'heure au format 24 heures (ex. 12:30) n'oubliez pas les :");
+					}
+				} while (!isValidInput);
+				
+				isValidInput = false;
+				
+				do {
+					try {
+						System.out.println("Veuillez saisir l'heure de fin de service (ex. 14:30)");
+						String inputHeureDeFin = scan.nextLine();
+						heureDeFin = LocalTime.parse(inputHeureDeFin, formatter);
+						isValidInput = true;
+						} catch (Exception e) {
+							System.out.println("Format d'heure incorrect. Veuillez saisir l'heure au format 24 heures (ex. 12:30) n'oubliez pas les :");
+						}
+				} while (!isValidInput);
+
 
 				System.out.println("Veuillez saisir le créneau (MIDI ou SOIR)");
 				String creneau = scan.nextLine();
@@ -212,6 +236,7 @@ public class ApplicationConsole {
 				System.out.println("Voulez-vous ajouter un nouvel horaire pour ce restaurant ?");
 				System.out.println("1. Oui");
 				System.out.println("2. Non");
+
 				int saisieChoix = 0;
 				saisieValide = false;
 		        do {
@@ -224,6 +249,7 @@ public class ApplicationConsole {
 		                scan.next(); // Effacer la saisie incorrecte du scanner
 		            }
 		        } while (!saisieValide);
+
 				scan.nextLine();
 				if (saisieChoix == 2){
 					continuer = false;
@@ -234,6 +260,7 @@ public class ApplicationConsole {
 			continuer = true;
 			do {
 				System.out.println("Veuillez saisir le numéro de table");
+
 				int numTable = 0;
 				saisieValide = false;
 		        do {
@@ -261,6 +288,7 @@ public class ApplicationConsole {
 		                scan.next(); // Effacer la saisie incorrecte du scanner
 		            }
 		        } while (!saisieValide);
+
 				scan.nextLine();
 
 				//		        System.out.println("Veuillez saisir l'état de la table"); // On met par défaut l'état Libre
@@ -271,6 +299,7 @@ public class ApplicationConsole {
 				System.out.println("Voulez-vous ajouter une nouvelle table pour ce restaurant ?");
 				System.out.println("1. Oui");
 				System.out.println("2. Non");
+
 				int saisieChoix = 0;
 				saisieValide = false;
 		        do {
@@ -283,6 +312,7 @@ public class ApplicationConsole {
 		                scan.next(); // Effacer la saisie incorrecte du scanner
 		            }
 		        } while (!saisieValide);
+
 				scan.nextLine();
 				if (saisieChoix == 2){
 					continuer = false;
@@ -290,6 +320,7 @@ public class ApplicationConsole {
 			} while(continuer);
 
 			System.out.println("Restaurant ajouté avec succès " + restaurantAjoute);
+ 
 		} catch (BLLException e) {
 			System.out.println("Une erreur est survenue :");
 			for (String erreur : e.getErreurs()) {
@@ -333,8 +364,13 @@ public class ApplicationConsole {
 					System.out.println("Restaurant ajouté avec succès: " + restaurantAjoute);
 				}
 			}
-		} catch (FileNotFoundException | BLLException e) {
+		} catch (FileNotFoundException e) {
 			System.out.println("Une erreur est survenue :");
+			e.printStackTrace();
+		} catch (BLLException e) {
+			for (String erreur : e.getErreurs()) {
+				System.out.println("\t" + erreur);
+			}
 			e.printStackTrace();
 		}
 	}
@@ -405,7 +441,11 @@ public class ApplicationConsole {
 			restaurantBll.update(restaurantAModifier);
 			System.out.println("Restaurant mis à jour avec succès !");
 		} catch (BLLException e) {
-			System.err.println("Erreur lors de la mise à jour du restaurant : " + e.getMessage());
+			System.out.println("Une erreur est survenue :");
+			for (String erreur : e.getErreurs()) {
+				System.out.println("\t" + erreur);
+			}
+			e.printStackTrace();
 		}
 	}
 
@@ -415,6 +455,7 @@ public class ApplicationConsole {
 			listerRestaurant();
 
 			System.out.println("Veuillez sélectionner l'id du restaurant à supprimer");
+
 			int restaurantId = 0;
 			boolean saisieValide = false;
 	        do {
@@ -461,6 +502,7 @@ public class ApplicationConsole {
 			System.err.println("Erreur lors de la récupération du restaurant à supprimer : " + blle.getMessage());
 			blle.printStackTrace();
 		}
+
 	}
 
 
@@ -591,7 +633,6 @@ public class ApplicationConsole {
 			affecterCarteRestaurant(carteNouvelle);
 
 		} catch (BLLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -665,7 +706,10 @@ public class ApplicationConsole {
 				System.out.println("Aucune carte trouvée avec l'id " + carteId);
 			}
 		} catch (BLLException e) {
-			System.err.println("Erreur lors de la mise à jour de la carte : " + e.getMessage());
+			System.out.println("Une erreur est survenue :");
+			for (String erreur : e.getErreurs()) {
+				System.out.println("\t" + erreur);
+			}
 			e.printStackTrace();
 		}
 	}
@@ -715,8 +759,10 @@ public class ApplicationConsole {
 		        } while (!saisieValide);
 				scan.nextLine();
 
+
 				System.out.println("Veuillez saisir son type (entrée, plat, dessert ou boisson)");
 				String typePlat = scan.nextLine();
+
 
 				Plat platAjoute = platBll.insert(nomPlat, descriptionPlat, prix,typePlat,carte);
 				System.out.println("L'item suivant a été ajouté : " + platAjoute);
@@ -731,6 +777,7 @@ public class ApplicationConsole {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
 
 	private static void listeCartes() {
@@ -775,9 +822,17 @@ public class ApplicationConsole {
 				afficherCarte(carteAjoute);
 				affecterCarteRestaurant(carteAjoute);
 			}
-		} catch (FileNotFoundException | BLLException e) {
+
+		} catch (FileNotFoundException e) {
 			System.out.println("Une erreur est survenue :");
 			e.printStackTrace();
+		} catch (BLLException e) {
+			for (String erreur : e.getErreurs()) {
+				System.out.println("\t" + erreur);
+			}
+			e.printStackTrace();
+
+
 		}
 	}
 
