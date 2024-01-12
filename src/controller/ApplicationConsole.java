@@ -562,9 +562,9 @@ public class ApplicationConsole {
 				System.out.println("\t" + current);
 			}
 		} catch (BLLException e) {
-			System.out.println("Une erreur est survenue :");
-			e.printStackTrace();
-		}
+	        System.out.println("Une erreur est survenue :");
+	        e.printStackTrace();
+	    }
 	}
 
 	private static void listerRestaurant() {
