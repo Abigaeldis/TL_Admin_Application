@@ -62,7 +62,6 @@ public class ApplicationConsole {
 		        do {
 		            try {
 		                decision = scan.nextInt();
-		                System.out.println("Vous avez saisi : " + decision);
 		                saisieValide = true; // Sortir de la boucle car la saisie est valide
 		            } catch (InputMismatchException e) {
 		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -78,11 +77,7 @@ public class ApplicationConsole {
 				}
 				break;
 			case 2:
-				try {
-					modifierRestaurant();
-				} catch (BLLException e) {
-					e.printStackTrace();
-				}
+				modifierRestaurant();
 				break;
 			case 3:
 				supprimerRestaurant();
@@ -97,7 +92,6 @@ public class ApplicationConsole {
 		        do {
 		            try {
 		            	decision_carte = scan.nextInt();
-		                System.out.println("Vous avez saisi : " + decision_carte);
 		                saisieValide = true; // Sortir de la boucle car la saisie est valide
 		            } catch (InputMismatchException e) {
 		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -124,9 +118,7 @@ public class ApplicationConsole {
 			}
 		} while (choix != 6);
 
-
 		scan.close();
-
 	}
 
 	private static int afficherMenu() {
@@ -141,7 +133,6 @@ public class ApplicationConsole {
         do {
             try {
             	choix = scan.nextInt();
-                System.out.println("Vous avez saisi : " + choix);
                 saisieValide = true; // Sortir de la boucle car la saisie est valide
             } catch (InputMismatchException e) {
                 System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -175,7 +166,6 @@ public class ApplicationConsole {
 	        do {
 	            try {
 	            	carteSelectionner = scan.nextInt();
-	                System.out.println("Vous avez saisi : " + carteSelectionner);
 	                saisieValide = true; // Sortir de la boucle car la saisie est valide
 	            } catch (InputMismatchException e) {
 	                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -242,7 +232,6 @@ public class ApplicationConsole {
 		        do {
 		            try {
 		            	saisieChoix = scan.nextInt();
-		                System.out.println("Vous avez saisi : " + saisieChoix);
 		                saisieValide = true; // Sortir de la boucle car la saisie est valide
 		            } catch (InputMismatchException e) {
 		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -266,7 +255,6 @@ public class ApplicationConsole {
 		        do {
 		            try {
 		            	numTable = scan.nextInt();
-		                System.out.println("Vous avez saisi : " + numTable);
 		                saisieValide = true; // Sortir de la boucle car la saisie est valide
 		            } catch (InputMismatchException e) {
 		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -281,7 +269,6 @@ public class ApplicationConsole {
 		        do {
 		            try {
 		            	capaciteTable = scan.nextInt();
-		                System.out.println("Vous avez saisi : " + capaciteTable);
 		                saisieValide = true; // Sortir de la boucle car la saisie est valide
 		            } catch (InputMismatchException e) {
 		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -305,7 +292,6 @@ public class ApplicationConsole {
 		        do {
 		            try {
 		            	saisieChoix = scan.nextInt();
-		                System.out.println("Vous avez saisi : " + saisieChoix);
 		                saisieValide = true; // Sortir de la boucle car la saisie est valide
 		            } catch (InputMismatchException e) {
 		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -329,8 +315,6 @@ public class ApplicationConsole {
 			e.printStackTrace();
 		}
 	}
-
-
 
 	private static void creerRestaurantAuto() {
 		try {
@@ -375,7 +359,7 @@ public class ApplicationConsole {
 		}
 	}
 
-	private static void modifierRestaurant() throws BLLException{
+	private static void modifierRestaurant(){
 
 		System.out.println("Vous avez choisi de modifier un restaurant existant");
 		listerRestaurant();
@@ -387,7 +371,6 @@ public class ApplicationConsole {
         do {
             try {
             	restaurantId = scan.nextInt();
-                System.out.println("Vous avez saisi : " + restaurantId);
                 saisieValide = true; // Sortir de la boucle car la saisie est valide
             } catch (InputMismatchException e) {
                 System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -399,7 +382,7 @@ public class ApplicationConsole {
 			restaurantAModifier = restaurantBll.selectById(restaurantId);
 			scan.nextLine();
 		} catch (BLLException e) {
-			throw new BLLException("Echec de la recuperation du restaurant d'id " + restaurantId, e);
+			e.printStackTrace();
 		}
 
 		// Demander à l'utilisateur le nouveau nom du restaurant
@@ -426,7 +409,6 @@ public class ApplicationConsole {
         do {
             try {
             	idCarte = scan.nextInt();
-                System.out.println("Vous avez saisi : " + idCarte);
                 saisieValide = true; // Sortir de la boucle car la saisie est valide
             } catch (InputMismatchException e) {
                 System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -434,7 +416,11 @@ public class ApplicationConsole {
             }
         } while (!saisieValide);
 		scan.nextLine();
-		restaurantAModifier.setCarte(carteBll.selectById(idCarte));
+		try {
+			restaurantAModifier.setCarte(carteBll.selectById(idCarte));
+		} catch (BLLException e) {
+			e.printStackTrace();
+		}
 
 		// Update pour modifier le restaurant dans la base de données
 		try {
@@ -461,7 +447,6 @@ public class ApplicationConsole {
 	        do {
 	            try {
 	            	restaurantId = scan.nextInt();
-	                System.out.println("Vous avez saisi : " + restaurantId);
 	                saisieValide = true; // Sortir de la boucle car la saisie est valide
 	            } catch (InputMismatchException e) {
 	                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -482,7 +467,6 @@ public class ApplicationConsole {
 	        do {
 	            try {
 	            	confirmation = scan.nextInt();
-	                System.out.println("Vous avez saisi : " + confirmation);
 	                saisieValide = true; // Sortir de la boucle car la saisie est valide
 	            } catch (InputMismatchException e) {
 	                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -505,8 +489,6 @@ public class ApplicationConsole {
 
 	}
 
-
-
 	private static void creerCarteManuel() {
 		System.out.println("Vous avez choisi de créer une carte manuellement.");
 		Carte carteNouvelle = null;
@@ -526,7 +508,6 @@ public class ApplicationConsole {
 		        do {
 		            try {
 		            	saisieUtilisateur = scan.nextInt();
-		                System.out.println("Vous avez saisi : " + saisieUtilisateur);
 		                saisieValide = true; // Sortir de la boucle car la saisie est valide
 		            } catch (InputMismatchException e) {
 		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -554,7 +535,6 @@ public class ApplicationConsole {
 		        do {
 		            try {
 		            	saisieUtilisateur = scan.nextInt();
-		                System.out.println("Vous avez saisi : " + saisieUtilisateur);
 		                saisieValide = true; // Sortir de la boucle car la saisie est valide
 		            } catch (InputMismatchException e) {
 		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -582,7 +562,6 @@ public class ApplicationConsole {
 		        do {
 		            try {
 		            	saisieUtilisateur = scan.nextInt();
-		                System.out.println("Vous avez saisi : " + saisieUtilisateur);
 		                saisieValide = true; // Sortir de la boucle car la saisie est valide
 		            } catch (InputMismatchException e) {
 		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -605,12 +584,11 @@ public class ApplicationConsole {
 				System.out.println("Voulez-vous ajouter des boissons à votre carte ?");
 				System.out.println("1. Oui");
 				System.out.println("2. Non");
-				int saisieUtilisateur = scan.nextInt();
+				int saisieUtilisateur = 0;
 				boolean saisieValide = false;
 		        do {
 		            try {
 		            	saisieUtilisateur = scan.nextInt();
-		                System.out.println("Vous avez saisi : " + saisieUtilisateur);
 		                saisieValide = true; // Sortir de la boucle car la saisie est valide
 		            } catch (InputMismatchException e) {
 		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -647,7 +625,6 @@ public class ApplicationConsole {
         do {
             try {
             	carteId = scan.nextInt();
-                System.out.println("Vous avez saisi : " + carteId);
                 saisieValide = true; // Sortir de la boucle car la saisie est valide
             } catch (InputMismatchException e) {
                 System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -671,7 +648,6 @@ public class ApplicationConsole {
 		        do {
 		            try {
 		            	saisieUtilisateur = scan.nextInt();
-		                System.out.println("Vous avez saisi : " + saisieUtilisateur);
 		                saisieValide = true; // Sortir de la boucle car la saisie est valide
 		            } catch (InputMismatchException e) {
 		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -727,7 +703,6 @@ public class ApplicationConsole {
 	        do {
 	            try {
 	            	saisiePlat = scan.nextInt();
-	                System.out.println("Vous avez saisi : " + saisiePlat);
 	                saisieValide = true; // Sortir de la boucle car la saisie est valide
 	            } catch (InputMismatchException e) {
 	                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -750,10 +725,9 @@ public class ApplicationConsole {
 		        do {
 		            try {
 		            	prix = scan.nextFloat();
-		                System.out.println("Vous avez saisi : " + prix);
 		                saisieValide = true; // Sortir de la boucle car la saisie est valide
 		            } catch (InputMismatchException e) {
-		                System.out.println("Erreur : Vous devez entrer un nombre décimal valide. Réessayez.");
+		                System.out.println("Erreur : Vous devez entrer un nombre décimal avec le format suivant : 12,5. Réessayez.");
 		                scan.next(); // Effacer la saisie incorrecte du scanner
 		            }
 		        } while (!saisieValide);
@@ -844,7 +818,6 @@ public class ApplicationConsole {
             try {
             	nbAffectation = scan.nextInt();
                 System.out.println("Vous avez saisi : " + nbAffectation);
-                saisieValide = true; // Sortir de la boucle car la saisie est valide
             } catch (InputMismatchException e) {
                 System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
                 scan.next(); // Effacer la saisie incorrecte du scanner
@@ -861,7 +834,6 @@ public class ApplicationConsole {
 		        do {
 		            try {
 		            	idRestaurant = scan.nextInt();
-		                System.out.println("Vous avez saisi : " + idRestaurant);
 		                saisieValide = true; // Sortir de la boucle car la saisie est valide
 		            } catch (InputMismatchException e) {
 		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -897,7 +869,6 @@ public class ApplicationConsole {
         do {
             try {
             	saisiePlat = scan.nextInt();
-                System.out.println("Vous avez saisi : " + saisiePlat);
                 saisieValide = true; // Sortir de la boucle car la saisie est valide
             } catch (InputMismatchException e) {
                 System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -921,7 +892,6 @@ public class ApplicationConsole {
 		        do {
 		            try {
 		            	prix = scan.nextFloat();
-		                System.out.println("Vous avez saisi : " + prix);
 		                saisieValide = true; // Sortir de la boucle car la saisie est valide
 		            } catch (InputMismatchException e) {
 		                System.out.println("Erreur : Vous devez entrer un nombre décimal valide. Réessayez.");
@@ -964,7 +934,6 @@ public class ApplicationConsole {
 	        do {
 	            try {
 	            	saisiePlat = scan.nextInt();
-	                System.out.println("Vous avez saisi : " + saisiePlat);
 	                saisieValide = true; // Sortir de la boucle car la saisie est valide
 	            } catch (InputMismatchException e) {
 	                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
@@ -991,7 +960,6 @@ public class ApplicationConsole {
 	        do {
 	            try {
 	            	prix = scan.nextFloat();
-	                System.out.println("Vous avez saisi : " + prix);
 	                saisieValide = true; // Sortir de la boucle car la saisie est valide
 	            } catch (InputMismatchException e) {
 	                System.out.println("Erreur : Vous devez entrer un nombre décimal valide. Réessayez.");
@@ -1023,7 +991,6 @@ public class ApplicationConsole {
 	        do {
 	            try {
 	            	saisiePlat = scan.nextInt();
-	                System.out.println("Vous avez saisi : " + saisiePlat);
 	                saisieValide = true; // Sortir de la boucle car la saisie est valide
 	            } catch (InputMismatchException e) {
 	                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
