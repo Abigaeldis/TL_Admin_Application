@@ -38,6 +38,35 @@ public class PlatBLL {
 	public Plat insert(String nom, String description, Float prix, String type, Carte carte) throws BLLException {
 		
 		BLLException blleException = new BLLException();
+		
+		if (nom.length() < 2) {
+			blleException.ajouterErreur("Le nom du plat doit faire au moins 2 caractères");
+		}
+		
+		if (nom.length() > 30) {
+			blleException.ajouterErreur("Le nom du plat doit faire au maximum 30 caractères");
+		}
+		
+		if (description.length() < 2) {
+			blleException.ajouterErreur("La description du plat doit faire au moins 2 caractères");
+		}
+		
+		if (description.length() > 150) {
+			blleException.ajouterErreur("La description du plat doit faire au maximum 150 caractères");
+		}
+		
+		if (type.length() < 2) {
+			blleException.ajouterErreur("La type doit du plat faire au moins 2 caractères");
+		}
+		
+		if (type.length() > 15) {
+			blleException.ajouterErreur("La type du plat doit faire au maximum 15 caractères");
+		}
+		
+		if (blleException.getErreurs().size() > 0) {
+			throw blleException;
+		}
+		
 		Plat plat = new Plat(nom, description, prix, type, carte);
 		
 		try {

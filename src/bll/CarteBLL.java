@@ -3,7 +3,6 @@ package bll;
 import java.util.List;
 
 import bo.Carte;
-import bo.Restaurant;
 import dal.CarteDAOJdbcImpl;
 import dal.DALException;
 import dal.GenericDAO;
@@ -38,12 +37,13 @@ public class CarteBLL {
 	public Carte insert(String nom) throws BLLException {
 		
 		BLLException blleException = new BLLException();
+
 		if (nom.length() < 2) {
-			blleException.ajouterErreur("Le nom doit faire au moins 2 caractères");
+			blleException.ajouterErreur("Le nom de la carte doit faire au moins 2 caractères");
 		}
 		
 		if (nom.length() > 30) {
-			blleException.ajouterErreur("Le nom doit faire au maximum 30 caractères");
+			blleException.ajouterErreur("Le nom de la carte doit faire au maximum 30 caractères");
 		}
 		
 		if (blleException.getErreurs().size() > 0) {
@@ -60,6 +60,20 @@ public class CarteBLL {
 	}
 	
 	public void update(Carte carte) throws BLLException {
+		
+		BLLException blleException = new BLLException();
+
+		if (carte.getNom().length() < 2) {
+			blleException.ajouterErreur("Le nom de la carte doit faire au moins 2 caractères");
+		}
+		
+		if (carte.getNom().length() > 30) {
+			blleException.ajouterErreur("Le nom de la carte doit faire au maximum 30 caractères");
+		}
+		
+		if (blleException.getErreurs().size() > 0) {
+			throw blleException;
+		}
 		
 		try {
 			dao.update(carte);
