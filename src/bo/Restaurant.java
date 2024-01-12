@@ -6,6 +6,7 @@ public class Restaurant {
 	private String adresse;
 	private String description;
 	private Carte carte;
+	private String status;
 	
 	/*
 	 * Constructeurs
@@ -71,11 +72,22 @@ public class Restaurant {
 	public void setCarte(Carte carte) {
 		this.carte = carte;
 	}
+	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 	@Override
 	public String toString() {
-		return "Restaurant " + nom + ", " + adresse + ", " + carte;
+		return "Restaurant [id=" + id + ", nom=" + nom + ", adresse=" + adresse + ", description=" + description
+				+ ", carte=" + carte + ", status=" + status + "]";
 	}
+
+
 	
 	
 	

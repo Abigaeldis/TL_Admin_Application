@@ -16,7 +16,7 @@ import bo.Restaurant;
 public class RestaurantDAOJdbcImpl implements GenericDAO<Restaurant> {
 	private static final String TABLE_NAME = " restaurants ";
 	
-	private static final String DELETE = "DELETE FROM"+ TABLE_NAME +" WHERE id = ?";
+	private static final String DELETE = "UPDATE "+ TABLE_NAME +" SET status = ? WHERE id = ?";
 	private static final String UPDATE = "UPDATE "+ TABLE_NAME +" SET nom = ?, adresse = ?, description = ?, id_carte = ? WHERE id = ?";
 	private static final String INSERT = "INSERT INTO "+ TABLE_NAME +" (nom, adresse, description,id_carte) VALUES (?,?,?,?)";
 	private static final String SELECT_BY_ID = "SELECT * FROM "+ TABLE_NAME +" WHERE id = ?";
@@ -41,6 +41,7 @@ public class RestaurantDAOJdbcImpl implements GenericDAO<Restaurant> {
 				restaurant.setNom(rs.getString("nom"));
 				restaurant.setAdresse(rs.getString("adresse"));
 				restaurant.setDescription(rs.getString("description"));
+				restaurant.setStatus(rs.getString("status"));
 				int idCarte = rs.getInt("id_carte");
 				CarteBLL carteBll = new CarteBLL();
 				Carte carte = carteBll.selectById(idCarte);
@@ -114,13 +115,14 @@ public class RestaurantDAOJdbcImpl implements GenericDAO<Restaurant> {
 	public void delete(int id) throws DALException {
 		try {
 			PreparedStatement ps = cnx.prepareStatement(DELETE);
-			ps.setInt(1, id);
+			ps.setString(1, "FERME");
+			ps.setInt(2, id);
 			int nbLignesSupprimees = ps.executeUpdate();
 			if (nbLignesSupprimees == 0) {
-				throw new DALException("Echec de suppression du restaurant d'id " + id, null);
+				throw new DALException("Echec de suppression du restaurant d'id " , null);
 			}
 		} catch (SQLException e) {
-			throw new DALException("Impossible de supprimer le restaurant d'id "+ id, e);
+			throw new DALException("Impossible de supprimer le restaurant d'id ", e);
 		}
 	}
 }

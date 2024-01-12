@@ -1,10 +1,9 @@
 package controller;
 
-import java.util.ArrayList;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
-
 import java.util.Scanner;
 
 import bll.BLLException;
@@ -15,7 +14,6 @@ import bll.TableBLL;
 import bo.Carte;
 import bo.Plat;
 import bo.Restaurant;
-import dal.DALException;
 
 public class ApplicationConsole {
 	private static Scanner scan;
@@ -61,7 +59,7 @@ public class ApplicationConsole {
 				modifierRestaurant();
 				break;
 			case 3:
-				//Supprimer un restaurant existant
+				supprimerRestaurant();
 				break;
 			case 4:
 				System.out.println("Veuillez choisir l'action à réaliser");
@@ -215,6 +213,45 @@ public class ApplicationConsole {
 
 
 	}
+	
+	private static void supprimerRestaurant() {
+	    try {
+	        System.out.println("Vous avez choisi de supprimer un restaurant existant");
+	        listerRestaurant();
+
+	        System.out.println("Veuillez sélectionner l'id du restaurant à supprimer");
+	        int restaurantId = scan.nextInt();
+	        scan.nextLine();
+
+	        // Display the selected restaurant for confirmation
+	        try {
+	            Restaurant restaurantToDelete = restaurantBll.selectById(restaurantId);
+	            System.out.println("Vous avez choisi de supprimer le restaurant suivant :");
+	            System.out.println(restaurantToDelete);
+	            
+	            // Ask for confirmation
+	            System.out.println("Voulez-vous vraiment supprimer ce restaurant ? (1. Oui / 2. Non)");
+	            int confirmation = scan.nextInt();
+	            scan.nextLine();
+
+	            if (confirmation == 1) {
+	                // Call the BLL method to delete the restaurant
+	                restaurantBll.delete(restaurantId);
+	                System.out.println("Restaurant supprimé avec succès !");
+	            } else {
+	                System.out.println("Suppression annulée.");
+	            }
+
+	        } catch (BLLException e) {
+	            System.err.println("Erreur lors de la récupération du restaurant à supprimer : " + e.getMessage());
+	        }
+
+	    } catch (Exception e) {
+	        System.err.println("Erreur lors de la suppression du restaurant : " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	}
+
 
 	private static void creerCarteManuel() {
 		System.out.println("Vous avez choisi de créer une carte manuellement.");
