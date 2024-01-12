@@ -1,0 +1,10 @@
+Nom de la carte
+CarteTest
+Nom du plat,Description,Prix (ex. 10.5),Type (entrée, plat, dessert, boisson)
+Une entrée,Une super entrée,9.5,entrée
+Une autre entrée,Encore meilleure !!,11.3,entrée
+Un plat,Voici un bon plat,19.5,plat
+Un dessert,Du sucre du sucre !,5.0,dessert
+Un new dessert,Encore plus de sucre !,4.3,dessert
+Une bonne bière,bière blonde pas forte,4.3,boisson
+Une autre boisson,sans alcool cette fois,3.9,boisson
