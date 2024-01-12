@@ -78,8 +78,7 @@ public class Plat {
 
 	@Override
 	public String toString() {
-		return "Plat [id=" + id + ", nom=" + nom + ", description=" + description + ", prix=" + prix + ", type=" + type
-				+ ", carte=" + carte + "]";
+		return nom + ", " + description + ", " + prix + "€ ("+type+")";
 	}
 
 	

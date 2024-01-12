@@ -112,6 +112,8 @@ public class PlatDAOJdbcImpl implements GenericDAO<Plat> {
 			ps.setFloat(3, plat.getPrix());
 			ps.setString(4, plat.getType());
 			ps.setInt(5, plat.getCarte().getId());
+			ps.setInt(6, plat.getId());
+			System.out.println(plat.getId());
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw new DALException("Impossible de mettre a jour les informations pour l'id "+ plat.getId(), e);

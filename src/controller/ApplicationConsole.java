@@ -1,5 +1,5 @@
 package controller;
- 
+
 import java.util.ArrayList;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -78,7 +78,7 @@ public class ApplicationConsole {
 				}				
 				break;
 			case 5:
-				//Modifier une carte
+				modifierCarte();
 				break;
 			case 6 :
 				System.out.println("Vous avez quitté l'application.");
@@ -109,22 +109,22 @@ public class ApplicationConsole {
 	private static void creerRestaurantManuel() {
 		Carte carte = null;
 		try {
-		System.out.println("Vous avez choisi d'ajouter un restaurant");
+			System.out.println("Vous avez choisi d'ajouter un restaurant");
 
-		System.out.println("Veuillez saisir le nom du restaurant");
-		String nom = scan.nextLine();
+			System.out.println("Veuillez saisir le nom du restaurant");
+			String nom = scan.nextLine();
 
-		System.out.println("Veuillez saisir l'adresse du restaurant");
-		String adresse = scan.nextLine();
+			System.out.println("Veuillez saisir l'adresse du restaurant");
+			String adresse = scan.nextLine();
 
-		System.out.println("Veuillez saisir une description pour votre restaurant");
-		String description = scan.nextLine();
-		System.out.println("Qu'elle carte voulez vous attribuer au restaurant");
-		System.out.println("Liste des cartes");
-		int carteSelectionner = scan.nextInt();
-		scan.nextLine();
-		
-		carte = carteBll.selectById(carteSelectionner);
+			System.out.println("Veuillez saisir une description pour votre restaurant");
+			String description = scan.nextLine();
+			System.out.println("Qu'elle carte voulez vous attribuer au restaurant");
+			listeCartes();
+			int carteSelectionner = scan.nextInt();
+			scan.nextLine();
+
+			carte = carteBll.selectById(carteSelectionner);
 			Restaurant restaurantAjoute = restaurantBll.insert(nom, adresse, description,carte);
 			System.out.println("Restaurant ajouté avec succès " + restaurantAjoute);
 		} catch (BLLException e) {
@@ -134,6 +134,86 @@ public class ApplicationConsole {
 			}
 			e.printStackTrace();
 		}
+	}
+
+	private static void creerRestaurantAuto() {
+		try {
+			System.out.println("Vous avez choisi d'ajouter des restaurants automatiquement");
+
+			System.out.println("Veuillez saisir le chemin du fichier restaurant");
+			//	        String filePath = scan.nextLine();
+			String filePath= "restaurant_data.csv";
+
+			try (Scanner fileScanner = new Scanner(new File(filePath))) {
+				// Skip the header line
+				if (fileScanner.hasNext()) {
+					fileScanner.nextLine();
+				}
+
+				while (fileScanner.hasNext()) {
+					String line = fileScanner.nextLine();
+					String[] restaurantInfo = line.split(",");
+
+					// Assuming the array contains: [name, address, description, carteId]
+					String nom = restaurantInfo[0];
+					String addresse = restaurantInfo[1];
+					String description = restaurantInfo[2];
+					int carteId = Integer.parseInt(restaurantInfo[3].trim());
+
+
+					Carte carte = carteBll.selectById(carteId);
+
+
+					Restaurant restaurantAjoute = restaurantBll.insert(nom, addresse, description, carte);
+					System.out.println("Restaurant ajouté avec succès: " + restaurantAjoute);
+				}
+			}
+		} catch (FileNotFoundException | BLLException e) {
+			System.out.println("Une erreur est survenue :");
+			e.printStackTrace();
+		}
+	}
+
+	private static void modifierRestaurant() throws BLLException { 
+
+		System.out.println("Vous avez choisi de modifier un restaurant existant");
+		listerRestaurant();
+
+		System.out.println("Veuillez sélectionner l'id du restaurant à modifier");
+		//Demande l'id du restaurant et execute un selectById       
+		int restaurantId = scan.nextInt();
+		scan.nextLine();
+		try {
+			restaurantBll.selectById(restaurantId);
+		} catch (BLLException e) {
+			throw new BLLException("Echec de la recuperation du restaurant d'id " + restaurantId, e);
+		}
+
+		// Demander à l'utilisateur le nouveau nom du restaurant
+		System.out.print("Entrez le nouveau nom du restaurant : ");
+		String nouveauNom = scan.nextLine();
+
+		// Demander à l'utilisateur la nouvelle adresse du restaurant
+		System.out.print("Entrez la nouvelle adresse du restaurant : ");
+		String nouvelleAdresse = scan.nextLine();
+
+		// Demander à l'utilisateur la nouvelle description du restaurant
+		System.out.print("Entrez la nouvelle description du restaurant : ");
+		String nouvelleDescription = scan.nextLine();
+
+		// Créer un objet Restaurant avec les nouvelles informations
+		Restaurant restaurantModifie = new Restaurant(restaurantId, nouveauNom, nouvelleAdresse, nouvelleDescription);
+
+		// Update pour modifier le restaurant dans la base de données
+		try {
+			restaurantBll.update(restaurantModifie);
+			System.out.println("Restaurant mis à jour avec succès !");
+		} catch (BLLException e) {
+			System.err.println("Erreur lors de la mise à jour du restaurant : " + e.getMessage());
+		}
+
+
+
 	}
 
 	private static void creerCarteManuel() {
@@ -216,13 +296,111 @@ public class ApplicationConsole {
 			} catch (BLLException e) {
 				e.printStackTrace();
 			}
-			
+
 			System.out.println("Vous avez créer la carte suivante :");
 			afficherCarte(carteNouvelle);
 			affecterCarteRestaurant(carteNouvelle);
 
 		} catch (BLLException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+private static void modifierCarte() {
+		System.out.println("Vous avez choisi de modifier une carte existante");
+		listeCartes();
+
+		System.out.println("Veuillez sélectionner l'id de la carte à modifier");
+		int carteId = scan.nextInt();
+		scan.nextLine();
+
+		try {
+			Carte carte = carteBll.selectById(carteId);
+			if (carte != null) {
+				System.out.println("Vous avez choisi de modifier la carte suivante :");
+				afficherCarte(carte);
+				System.out.println("Que souhaitez-vous modifier sur cette carte ?");
+				System.out.println("1. Modification du nom de la carte");
+				System.out.println("2. Ajout d'un item à la carte");
+				System.out.println("3. Modification d'un item de la carte");
+				System.out.println("4. Suppression d'un item de la carte");
+				int saisie_utilisateur = scan.nextInt();
+				scan.nextLine();
+				switch (saisie_utilisateur) {
+				case 1 :
+					System.out.print("Entrez le nouveau nom de la carte : ");
+					String nouveauNomCarte = scan.nextLine();
+					carte.setNom(nouveauNomCarte);
+					carteBll.update(carte);
+					System.out.println("Carte mise à jour avec succès !");
+					break;
+				case 2 : 
+					ajouterItemACarte(carte);
+					break;
+				case 3 : 
+					modifierPlat(carte);
+					System.out.println("Plat modifié avec succès !");
+					break;
+				case 4 : 
+					suppressionPlat(carte);
+					System.out.println("Plat supprimé avec succès !");
+					break;
+				default:
+					System.out.println("Veuillez saisir un nombre entre 1 et 3.");
+					break;
+				}
+			} else {
+				System.out.println("Aucune carte trouvée avec l'id " + carteId);
+			}
+		} catch (BLLException e) {
+			System.err.println("Erreur lors de la mise à jour de la carte : " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	private static void ajouterItemACarte(Carte carte) throws BLLException {
+		for (Plat current : platBll.selectAll()) {
+			if (current.getCarte().getId() == carte.getId()) {
+				System.out.println("\t" + current.getId() + ". " + current);
+			}
+		}
+		int saisiePlat= scan.nextInt();
+		scan.nextLine();
+		if (saisiePlat==0) {
+			System.out.println("Vous avez choisi la création d'un nouvel item");
+
+			System.out.println("Veuillez saisir son nom");
+			String nomPlat = scan.nextLine();
+
+			System.out.println("Veuillez saisir sa description");
+			String descriptionPlat = scan.nextLine();
+
+			System.out.println("Veuillez saisir son prix (ex. 12,5)");
+			Float prix = scan.nextFloat();
+			scan.nextLine();
+
+			System.out.println("Veuillez saisir son type (entrée, plat, dessert ou boisson)");
+			String typePlat = scan.nextLine();
+			
+			Plat platAjoute = platBll.insert(nomPlat, descriptionPlat, prix,typePlat,carte);
+			System.out.println("L'item suivant a été ajouté : " + platAjoute);
+
+		} else {
+			Plat platADupliquer = platBll.selectById(saisiePlat);
+			Plat platAjoute = platBll.insert(platADupliquer.getNom(), platADupliquer.getDescription(), platADupliquer.getPrix(),platADupliquer.getType(),carte);			
+			System.out.println("L'item suivant a été ajoutée : " + platAjoute);
+		}
+		System.out.println("Plat ajouté avec succès !");
+	}
+
+	private static void listeCartes() {
+		try {
+			List<Carte> cartes = carteBll.selectAll();
+			for (Carte current : cartes) {
+				System.out.println("\t" + current.getId() + ". " + current.getNom());
+			}
+		} catch (BLLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -321,7 +499,57 @@ public class ApplicationConsole {
 			System.out.println("L'item suivant a été ajoutée : " + platAjoute);
 		}
 	}
-	
+
+	private static void modifierPlat(Carte carte) throws BLLException {
+		System.out.println("Quel item souhaitez-vous modifier parmi les suivants ?");
+		List<Plat> plats =  platBll.selectAll();
+		for (Plat current : plats) {
+			if (current.getCarte().getId() == carte.getId()) {
+				System.out.println("\t" + current.getId() + ". " + current);
+			}
+		}
+		int saisiePlat= scan.nextInt();
+		scan.nextLine();
+
+		Plat platAModifier = platBll.selectById(saisiePlat); 
+		System.out.println("Vous avez choisi la modification de l'item suivant :");
+		System.out.println(platAModifier);
+
+		System.out.println("Veuillez saisir son nom");
+		String nomPlat = scan.nextLine();
+		platAModifier.setNom(nomPlat);
+
+		System.out.println("Veuillez saisir sa description");
+		String descriptionPlat = scan.nextLine();
+		platAModifier.setDescription(descriptionPlat);
+
+		System.out.println("Veuillez saisir son prix (ex. 12,5)");
+		Float prix = scan.nextFloat();
+		scan.nextLine();
+		platAModifier.setPrix(prix);
+
+		platBll.update(platAModifier);
+		System.out.println("L'item suivant a été modifié : \n" + platAModifier);
+	}
+
+	private static void suppressionPlat(Carte carte) {
+		System.out.println("Quel item souhaitez-vous modifier parmi les suivants ?");
+		List<Plat> plats;
+		try {
+			plats = platBll.selectAll();
+			for (Plat current : plats) {
+				if (current.getCarte().getId() == carte.getId()) {
+					System.out.println("\t" + current.getId() + ". " + current);
+				}
+			}
+			int saisiePlat= scan.nextInt();
+			scan.nextLine();
+			platBll.delete(saisiePlat);
+		} catch (BLLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private static void afficherCarte(Carte carteNouvelle) {
 		System.out.println("Carte n°"+carteNouvelle.getId() + " : " + carteNouvelle.getNom());
 		List<Plat> items;
@@ -354,110 +582,26 @@ public class ApplicationConsole {
 			}
 			System.out.println("Entrées :");
 			for (Plat current : entrees) {
-				System.out.println(current);
+				System.out.println("\t" + current);
 			}
 			System.out.println("Plats :");
 			for (Plat current : plats) {
-				System.out.println(current);
+				System.out.println("\t" + current);
 			}
 			System.out.println("Desserts :");
 			for (Plat current : desserts) {
-				System.out.println(current);
+				System.out.println("\t" + current);
 			}
 			System.out.println("Boissons :");
 			for (Plat current : boissons) {
-				System.out.println(current);
+				System.out.println("\t" + current);
 			}
 		} catch (BLLException e) {
 	        System.out.println("Une erreur est survenue :");
 	        e.printStackTrace();
 	    }
 	}
-      
-	private static void creerRestaurantAuto() {
-	    try {
-	        System.out.println("Vous avez choisi d'ajouter des restaurants automatiquement");
 
-	        System.out.println("Veuillez saisir le chemin du fichier restaurant");
-	        String filePath = scan.nextLine();
-
-	        try (Scanner fileScanner = new Scanner(new File(filePath))) {
-	            // Skip the header line
-	            if (fileScanner.hasNext()) {
-	                fileScanner.nextLine();
-	            }
-
-	            while (fileScanner.hasNext()) {
-	                String line = fileScanner.nextLine();
-	                String[] restaurantInfo = line.split(",");
-
-	                // Assuming the array contains: [name, address, description, carteId]
-	                String nom = restaurantInfo[0];
-	                String addresse = restaurantInfo[1];
-	                String description = restaurantInfo[2];
-	                int carteId = Integer.parseInt(restaurantInfo[3].trim());
-
-	                
-	                Carte carte = carteBll.selectById(carteId);
-
-
-	                Restaurant restaurantAjoute = restaurantBll.insert(nom, addresse, description, carte);
-	                System.out.println("Restaurant ajouté avec succès: " + restaurantAjoute);
-	            }
-	        }
-	    } catch (FileNotFoundException | BLLException e) {
-	        System.out.println("Une erreur est survenue :");
-	        e.printStackTrace();
-	    }
-	}
-
-
-
-	
-	private static void modifierRestaurant() throws BLLException { 
-		
-		System.out.println("Vous avez choisi de modifier un restaurant existant");
-		listerRestaurant();
-		
-		System.out.println("Veuillez sélectionner l'id du restaurant à modifier");
-		//Demande l'id du restaurant et execute un selectById       
-        int restaurantId = scan.nextInt();
-        scan.nextLine();
-        try {
-			restaurantBll.selectById(restaurantId);
-		} catch (BLLException e) {
-			throw new BLLException("Echec de la recuperation du restaurant d'id " + restaurantId, e);
-		}
-
-        // Demander à l'utilisateur le nouveau nom du restaurant
-        System.out.print("Entrez le nouveau nom du restaurant : ");
-        String nouveauNom = scan.nextLine();
-
-        // Demander à l'utilisateur la nouvelle adresse du restaurant
-        System.out.print("Entrez la nouvelle adresse du restaurant : ");
-        String nouvelleAdresse = scan.nextLine();
-
-        // Demander à l'utilisateur la nouvelle description du restaurant
-        System.out.print("Entrez la nouvelle description du restaurant : ");
-        String nouvelleDescription = scan.nextLine();
-
-        // Créer un objet Restaurant avec les nouvelles informations
-        Restaurant restaurantModifie = new Restaurant(restaurantId, nouveauNom, nouvelleAdresse, nouvelleDescription);
-
-        // Update pour modifier le restaurant dans la base de données
-        try {
-             restaurantBll.update(restaurantModifie);
-            System.out.println("Restaurant mis à jour avec succès !");
-        } catch (BLLException e) {
-            System.err.println("Erreur lors de la mise à jour du restaurant : " + e.getMessage());
-        }
-		
-        
-		
-	}
-	/*
-	 * 
-	 */
 	private static void listerRestaurant() {
 		try {
 			List<Restaurant> restaurants = restaurantBll.selectAll();
