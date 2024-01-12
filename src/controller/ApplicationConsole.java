@@ -1,9 +1,11 @@
 package controller;
+
+import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -28,7 +30,8 @@ public class ApplicationConsole {
 	private static CarteBLL carteBll;
 	private static HoraireBLL horaireBll;
 
-	public static void main(String[] args) throws BLLException {
+	public static void main(String[] args) {
+		boolean saisieValide;
 		System.out.println("Bienvenue dans notre application d'administration.\n");
 		scan = new Scanner(System.in);
 		try {
@@ -53,8 +56,20 @@ public class ApplicationConsole {
 				System.out.println("Veuillez choisir l'action à réaliser");
 				System.out.println("1.Saisie de restaurant manuelle");
 				System.out.println("2.Saisie de restaurant automatique");
-				int decision = scan.nextInt();
-				scan.nextLine();
+				
+				saisieValide = false;
+				int decision = 0;
+		        do {
+		            try {
+		                decision = scan.nextInt();
+		                System.out.println("Vous avez saisi : " + decision);
+		                saisieValide = true; // Sortir de la boucle car la saisie est valide
+		            } catch (InputMismatchException e) {
+		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+		                scan.next(); // Effacer la saisie incorrecte du scanner
+		            }
+		        } while (!saisieValide);
+		        scan.nextLine();
 				if (decision == 1) {
 					creerRestaurantManuel();
 				}
@@ -63,7 +78,11 @@ public class ApplicationConsole {
 				}
 				break;
 			case 2:
-				modifierRestaurant();
+				try {
+					modifierRestaurant();
+				} catch (BLLException e) {
+					e.printStackTrace();
+				}
 				break;
 			case 3:
 				supprimerRestaurant();
@@ -73,7 +92,18 @@ public class ApplicationConsole {
 				System.out.println("1. Saisie de carte manuelle");
 				System.out.println("2. Saisie de carte automatique");
 				System.out.println("3. Retour au menu");
-				int decision_carte = scan.nextInt();
+				saisieValide = false;
+				int decision_carte = 0;
+		        do {
+		            try {
+		            	decision_carte = scan.nextInt();
+		                System.out.println("Vous avez saisi : " + decision_carte);
+		                saisieValide = true; // Sortir de la boucle car la saisie est valide
+		            } catch (InputMismatchException e) {
+		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+		                scan.next(); // Effacer la saisie incorrecte du scanner
+		            }
+		        } while (!saisieValide);
 				scan.nextLine();
 				if (decision_carte == 1) {
 					creerCarteManuel();;
@@ -106,7 +136,18 @@ public class ApplicationConsole {
 		System.out.println("\t 4. Créer une carte");
 		System.out.println("\t 5. Modifier une carte");
 		System.out.println("\t 6. Quitter l'application");
-		int choix = scan.nextInt();
+		int choix = 0;
+		boolean saisieValide = false;
+        do {
+            try {
+            	choix = scan.nextInt();
+                System.out.println("Vous avez saisi : " + choix);
+                saisieValide = true; // Sortir de la boucle car la saisie est valide
+            } catch (InputMismatchException e) {
+                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+                scan.next(); // Effacer la saisie incorrecte du scanner
+            }
+        } while (!saisieValide);
 		scan.nextLine();
 		return choix;
 	}
@@ -116,7 +157,6 @@ public class ApplicationConsole {
 		Carte carte = null;
 		try {
 			System.out.println("Vous avez choisi d'ajouter un restaurant");
-
 
 			System.out.println("Veuillez saisir le nom du restaurant");
 			String nom = scan.nextLine();
@@ -129,7 +169,20 @@ public class ApplicationConsole {
 
 			System.out.println("Quelle carte voulez-vous attribuer au restaurant");
 			listeCartes();
-			int carteSelectionner = scan.nextInt();
+
+			int carteSelectionner = 0;
+			boolean saisieValide = false;
+	        do {
+	            try {
+	            	carteSelectionner = scan.nextInt();
+	                System.out.println("Vous avez saisi : " + carteSelectionner);
+	                saisieValide = true; // Sortir de la boucle car la saisie est valide
+	            } catch (InputMismatchException e) {
+	                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+	                scan.next(); // Effacer la saisie incorrecte du scanner
+	            }
+	        } while (!saisieValide);
+
 			scan.nextLine();
 
 			carte = carteBll.selectById(carteSelectionner);
@@ -145,6 +198,7 @@ public class ApplicationConsole {
 				String jour = scan.nextLine();
 
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
 				LocalTime heureDeDebut = null;
 				LocalTime heureDeFin = null;
 				boolean isValidInput = false;
@@ -173,6 +227,7 @@ public class ApplicationConsole {
 						}
 				} while (!isValidInput);
 
+
 				System.out.println("Veuillez saisir le créneau (MIDI ou SOIR)");
 				String creneau = scan.nextLine();
 
@@ -181,7 +236,20 @@ public class ApplicationConsole {
 				System.out.println("Voulez-vous ajouter un nouvel horaire pour ce restaurant ?");
 				System.out.println("1. Oui");
 				System.out.println("2. Non");
-				int saisieChoix = scan.nextInt();
+
+				int saisieChoix = 0;
+				saisieValide = false;
+		        do {
+		            try {
+		            	saisieChoix = scan.nextInt();
+		                System.out.println("Vous avez saisi : " + saisieChoix);
+		                saisieValide = true; // Sortir de la boucle car la saisie est valide
+		            } catch (InputMismatchException e) {
+		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+		                scan.next(); // Effacer la saisie incorrecte du scanner
+		            }
+		        } while (!saisieValide);
+
 				scan.nextLine();
 				if (saisieChoix == 2){
 					continuer = false;
@@ -192,11 +260,35 @@ public class ApplicationConsole {
 			continuer = true;
 			do {
 				System.out.println("Veuillez saisir le numéro de table");
-				int numTable = scan.nextInt();
+
+				int numTable = 0;
+				saisieValide = false;
+		        do {
+		            try {
+		            	numTable = scan.nextInt();
+		                System.out.println("Vous avez saisi : " + numTable);
+		                saisieValide = true; // Sortir de la boucle car la saisie est valide
+		            } catch (InputMismatchException e) {
+		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+		                scan.next(); // Effacer la saisie incorrecte du scanner
+		            }
+		        } while (!saisieValide);
 				scan.nextLine();
 
 				System.out.println("Veuillez saisir la capacité de la table");
-				int capaciteTable = scan.nextInt();
+				int capaciteTable = 0;
+				saisieValide = false;
+		        do {
+		            try {
+		            	capaciteTable = scan.nextInt();
+		                System.out.println("Vous avez saisi : " + capaciteTable);
+		                saisieValide = true; // Sortir de la boucle car la saisie est valide
+		            } catch (InputMismatchException e) {
+		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+		                scan.next(); // Effacer la saisie incorrecte du scanner
+		            }
+		        } while (!saisieValide);
+
 				scan.nextLine();
 
 				//		        System.out.println("Veuillez saisir l'état de la table"); // On met par défaut l'état Libre
@@ -207,7 +299,20 @@ public class ApplicationConsole {
 				System.out.println("Voulez-vous ajouter une nouvelle table pour ce restaurant ?");
 				System.out.println("1. Oui");
 				System.out.println("2. Non");
-				int saisieChoix = scan.nextInt();
+
+				int saisieChoix = 0;
+				saisieValide = false;
+		        do {
+		            try {
+		            	saisieChoix = scan.nextInt();
+		                System.out.println("Vous avez saisi : " + saisieChoix);
+		                saisieValide = true; // Sortir de la boucle car la saisie est valide
+		            } catch (InputMismatchException e) {
+		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+		                scan.next(); // Effacer la saisie incorrecte du scanner
+		            }
+		        } while (!saisieValide);
+
 				scan.nextLine();
 				if (saisieChoix == 2){
 					continuer = false;
@@ -215,7 +320,7 @@ public class ApplicationConsole {
 			} while(continuer);
 
 			System.out.println("Restaurant ajouté avec succès " + restaurantAjoute);
-
+ 
 		} catch (BLLException e) {
 			System.out.println("Une erreur est survenue :");
 			for (String erreur : e.getErreurs()) {
@@ -270,14 +375,25 @@ public class ApplicationConsole {
 		}
 	}
 
-	private static void modifierRestaurant() throws BLLException {
+	private static void modifierRestaurant() throws BLLException{
 
 		System.out.println("Vous avez choisi de modifier un restaurant existant");
 		listerRestaurant();
 
 		System.out.println("Veuillez sélectionner l'id du restaurant à modifier");
 		//Demande l'id du restaurant et execute un selectById       
-		int restaurantId = scan.nextInt();
+		int restaurantId = 0;
+		boolean saisieValide = false;
+        do {
+            try {
+            	restaurantId = scan.nextInt();
+                System.out.println("Vous avez saisi : " + restaurantId);
+                saisieValide = true; // Sortir de la boucle car la saisie est valide
+            } catch (InputMismatchException e) {
+                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+                scan.next(); // Effacer la saisie incorrecte du scanner
+            }
+        } while (!saisieValide);
 		Restaurant restaurantAModifier = null;
 		try {
 			restaurantAModifier = restaurantBll.selectById(restaurantId);
@@ -305,10 +421,20 @@ public class ApplicationConsole {
 		System.out.print("Entrez la nouvelle carte : ");
 		System.out.println();
 		listeCartes();
-		int idCarte = scan.nextInt();
+		int idCarte = 0;
+		saisieValide = false;
+        do {
+            try {
+            	idCarte = scan.nextInt();
+                System.out.println("Vous avez saisi : " + idCarte);
+                saisieValide = true; // Sortir de la boucle car la saisie est valide
+            } catch (InputMismatchException e) {
+                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+                scan.next(); // Effacer la saisie incorrecte du scanner
+            }
+        } while (!saisieValide);
 		scan.nextLine();
 		restaurantAModifier.setCarte(carteBll.selectById(idCarte));
-
 
 		// Update pour modifier le restaurant dans la base de données
 		try {
@@ -329,34 +455,52 @@ public class ApplicationConsole {
 			listerRestaurant();
 
 			System.out.println("Veuillez sélectionner l'id du restaurant à supprimer");
-			int restaurantId = scan.nextInt();
+
+			int restaurantId = 0;
+			boolean saisieValide = false;
+	        do {
+	            try {
+	            	restaurantId = scan.nextInt();
+	                System.out.println("Vous avez saisi : " + restaurantId);
+	                saisieValide = true; // Sortir de la boucle car la saisie est valide
+	            } catch (InputMismatchException e) {
+	                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+	                scan.next(); // Effacer la saisie incorrecte du scanner
+	            }
+	        } while (!saisieValide);
 			scan.nextLine();
+
 			// Display the selected restaurant for confirmation
-			try {
-				Restaurant restaurantToDelete = restaurantBll.selectById(restaurantId);
-				System.out.println("Vous avez choisi de supprimer le restaurant suivant :");
-				System.out.println(restaurantToDelete);
+			Restaurant restaurantToDelete = restaurantBll.selectById(restaurantId);
+			System.out.println("Vous avez choisi de supprimer le restaurant suivant :");
+			System.out.println(restaurantToDelete);
 
-				// Ask for confirmation
-				System.out.println("Voulez-vous vraiment supprimer ce restaurant ? (1. Oui / 2. Non)");
-				int confirmation = scan.nextInt();
-				scan.nextLine();
+			// Ask for confirmation
+			System.out.println("Voulez-vous vraiment supprimer ce restaurant ? (1. Oui / 2. Non)");
+			int confirmation = 0;
+			saisieValide = false;
+	        do {
+	            try {
+	            	confirmation = scan.nextInt();
+	                System.out.println("Vous avez saisi : " + confirmation);
+	                saisieValide = true; // Sortir de la boucle car la saisie est valide
+	            } catch (InputMismatchException e) {
+	                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+	                scan.next(); // Effacer la saisie incorrecte du scanner
+	            }
+	        } while (!saisieValide);
+			scan.nextLine();
 
-				if (confirmation == 1) {
-					// Call the BLL method to delete the restaurant
-					restaurantBll.delete(restaurantId);
-					System.out.println("Restaurant supprimé avec succès !");
-				} else {
-					System.out.println("Suppression annulée.");
-				}
-
-			} catch (BLLException e) {
-				System.err.println("Erreur lors de la récupération du restaurant à supprimer : " + e.getMessage());
+			if (confirmation == 1) {
+				// Call the BLL method to delete the restaurant
+				restaurantBll.delete(restaurantId);
+				System.out.println("Restaurant supprimé avec succès !");
+			} else {
+				System.out.println("Suppression annulée.");
 			}
-
-		} catch (Exception e) {
-			System.err.println("Erreur lors de la suppression du restaurant : " + e.getMessage());
-			e.printStackTrace();
+		} catch (BLLException blle) {
+			System.err.println("Erreur lors de la récupération du restaurant à supprimer : " + blle.getMessage());
+			blle.printStackTrace();
 		}
 
 	}
@@ -371,78 +515,118 @@ public class ApplicationConsole {
 		try {
 			carteNouvelle = carteBll.insert(nomEntree);
 			List<Plat> plats;
-			try {
-				boolean continuer = true;
-				plats = platBll.selectAll();
-				do{
-					System.out.println("Voulez-vous ajouter des entrées à votre carte ?");
-					System.out.println("1. Oui");
-					System.out.println("2. Non");
-					int saisieUtilisateur = scan.nextInt();
-					scan.nextLine();
-					if (saisieUtilisateur == 1) {
-						System.out.println("Quelle entrée souhaitez-vous ajouter à cette carte  ?");
-						System.out.println("\t0 : Je souhaite créer une nouvelle entrée.");
-						ajouterPlat(plats, carteNouvelle, "entrée");
-					}
-					else {
-						continuer = false;
-					}
-				} while(continuer);
+			boolean continuer = true;
+			plats = platBll.selectAll();
+			do{
+				System.out.println("Voulez-vous ajouter des entrées à votre carte ?");
+				System.out.println("1. Oui");
+				System.out.println("2. Non");
+				int saisieUtilisateur = 0;
+				boolean saisieValide = false;
+		        do {
+		            try {
+		            	saisieUtilisateur = scan.nextInt();
+		                System.out.println("Vous avez saisi : " + saisieUtilisateur);
+		                saisieValide = true; // Sortir de la boucle car la saisie est valide
+		            } catch (InputMismatchException e) {
+		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+		                scan.next(); // Effacer la saisie incorrecte du scanner
+		            }
+		        } while (!saisieValide);
+				scan.nextLine();
+				if (saisieUtilisateur == 1) {
+					System.out.println("Quelle entrée souhaitez-vous ajouter à cette carte  ?");
+					System.out.println("\t0 : Je souhaite créer une nouvelle entrée.");
+					ajouterPlat(plats, carteNouvelle, "entrée");
+				}
+				else {
+					continuer = false;
+				}
+			} while(continuer);
 
-				continuer = true;
-				do{
-					System.out.println("Voulez-vous ajouter des plats à votre carte ?");
-					System.out.println("1. Oui");
-					System.out.println("2. Non");
-					int saisieUtilisateur = scan.nextInt();
-					scan.nextLine();
-					if (saisieUtilisateur == 1) {
-						System.out.println("Quel plat souhaitez-vous ajouter à cette carte  ?");
-						System.out.println("\t0 : Je souhaite créer un nouveau plat.");
-						ajouterPlat(plats, carteNouvelle, "plat");
-					}
-					else {
-						continuer = false;
-					}
-				} while(continuer);
+			continuer = true;
+			do{
+				System.out.println("Voulez-vous ajouter des plats à votre carte ?");
+				System.out.println("1. Oui");
+				System.out.println("2. Non");
+				int saisieUtilisateur = 0;
+				boolean saisieValide = false;
+		        do {
+		            try {
+		            	saisieUtilisateur = scan.nextInt();
+		                System.out.println("Vous avez saisi : " + saisieUtilisateur);
+		                saisieValide = true; // Sortir de la boucle car la saisie est valide
+		            } catch (InputMismatchException e) {
+		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+		                scan.next(); // Effacer la saisie incorrecte du scanner
+		            }
+		        } while (!saisieValide);
+				scan.nextLine();
+				if (saisieUtilisateur == 1) {
+					System.out.println("Quel plat souhaitez-vous ajouter à cette carte  ?");
+					System.out.println("\t0 : Je souhaite créer un nouveau plat.");
+					ajouterPlat(plats, carteNouvelle, "plat");
+				}
+				else {
+					continuer = false;
+				}
+			} while(continuer);
 
-				continuer = true;
-				do{
-					System.out.println("Voulez-vous ajouter des desserts à votre carte ?");
-					System.out.println("1. Oui");
-					System.out.println("2. Non");
-					int saisieUtilisateur = scan.nextInt();
-					scan.nextLine();
-					if (saisieUtilisateur == 1) {
-						System.out.println("Quel dessert souhaitez-vous ajouter à cette carte  ?");
-						System.out.println("\t0 : Je souhaite créer un nouveau dessert.");
-						ajouterPlat(plats, carteNouvelle, "dessert");
-					}
-					else {
-						continuer = false;
-					}
-				} while(continuer);
+			continuer = true;
+			do{
+				System.out.println("Voulez-vous ajouter des desserts à votre carte ?");
+				System.out.println("1. Oui");
+				System.out.println("2. Non");
+				int saisieUtilisateur = 0;
+				boolean saisieValide = false;
+		        do {
+		            try {
+		            	saisieUtilisateur = scan.nextInt();
+		                System.out.println("Vous avez saisi : " + saisieUtilisateur);
+		                saisieValide = true; // Sortir de la boucle car la saisie est valide
+		            } catch (InputMismatchException e) {
+		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+		                scan.next(); // Effacer la saisie incorrecte du scanner
+		            }
+		        } while (!saisieValide);
+				scan.nextLine();
+				if (saisieUtilisateur == 1) {
+					System.out.println("Quel dessert souhaitez-vous ajouter à cette carte  ?");
+					System.out.println("\t0 : Je souhaite créer un nouveau dessert.");
+					ajouterPlat(plats, carteNouvelle, "dessert");
+				}
+				else {
+					continuer = false;
+				}
+			} while(continuer);
 
-				continuer = true;
-				do{
-					System.out.println("Voulez-vous ajouter des boissons à votre carte ?");
-					System.out.println("1. Oui");
-					System.out.println("2. Non");
-					int saisieUtilisateur = scan.nextInt();
-					scan.nextLine();
-					if (saisieUtilisateur == 1) {
-						System.out.println("Quelle boisson souhaitez-vous ajouter à cette carte  ?");
-						System.out.println("\t0 : Je souhaite créer une nouvelle boisson.");
-						ajouterPlat(plats, carteNouvelle, "boisson");
-					}
-					else {
-						continuer = false;
-					}
-				} while(continuer);
-			} catch (BLLException e) {
-				e.printStackTrace();
-			}
+			continuer = true;
+			do{
+				System.out.println("Voulez-vous ajouter des boissons à votre carte ?");
+				System.out.println("1. Oui");
+				System.out.println("2. Non");
+				int saisieUtilisateur = scan.nextInt();
+				boolean saisieValide = false;
+		        do {
+		            try {
+		            	saisieUtilisateur = scan.nextInt();
+		                System.out.println("Vous avez saisi : " + saisieUtilisateur);
+		                saisieValide = true; // Sortir de la boucle car la saisie est valide
+		            } catch (InputMismatchException e) {
+		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+		                scan.next(); // Effacer la saisie incorrecte du scanner
+		            }
+		        } while (!saisieValide);
+				scan.nextLine();
+				if (saisieUtilisateur == 1) {
+					System.out.println("Quelle boisson souhaitez-vous ajouter à cette carte  ?");
+					System.out.println("\t0 : Je souhaite créer une nouvelle boisson.");
+					ajouterPlat(plats, carteNouvelle, "boisson");
+				}
+				else {
+					continuer = false;
+				}
+			} while(continuer);
 
 			System.out.println("Vous avez créer la carte suivante :");
 			afficherCarte(carteNouvelle);
@@ -458,7 +642,18 @@ public class ApplicationConsole {
 		listeCartes();
 
 		System.out.println("Veuillez sélectionner l'id de la carte à modifier");
-		int carteId = scan.nextInt();
+		int carteId = 0;
+		boolean saisieValide = false;
+        do {
+            try {
+            	carteId = scan.nextInt();
+                System.out.println("Vous avez saisi : " + carteId);
+                saisieValide = true; // Sortir de la boucle car la saisie est valide
+            } catch (InputMismatchException e) {
+                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+                scan.next(); // Effacer la saisie incorrecte du scanner
+            }
+        } while (!saisieValide);
 		scan.nextLine();
 
 		try {
@@ -471,9 +666,20 @@ public class ApplicationConsole {
 				System.out.println("2. Ajout d'un item à la carte");
 				System.out.println("3. Modification d'un item de la carte");
 				System.out.println("4. Suppression d'un item de la carte");
-				int saisie_utilisateur = scan.nextInt();
+				int saisieUtilisateur = 0;
+				saisieValide = false;
+		        do {
+		            try {
+		            	saisieUtilisateur = scan.nextInt();
+		                System.out.println("Vous avez saisi : " + saisieUtilisateur);
+		                saisieValide = true; // Sortir de la boucle car la saisie est valide
+		            } catch (InputMismatchException e) {
+		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+		                scan.next(); // Effacer la saisie incorrecte du scanner
+		            }
+		        } while (!saisieValide);
 				scan.nextLine();
-				switch (saisie_utilisateur) {
+				switch (saisieUtilisateur) {
 				case 1 :
 					System.out.print("Entrez le nouveau nom de la carte : ");
 					String nouveauNomCarte = scan.nextLine();
@@ -508,39 +714,70 @@ public class ApplicationConsole {
 		}
 	}
 
-	private static void ajouterItemACarte(Carte carte) throws BLLException {
-		for (Plat current : platBll.selectAll()) {
-			if (current.getCarte().getId() == carte.getId()) {
-				System.out.println("\t" + current.getId() + ". " + current);
+	private static void ajouterItemACarte(Carte carte){
+		try {
+			for (Plat current : platBll.selectAll()) {
+				if (current.getCarte().getId() == carte.getId()) {
+					System.out.println("\t" + current.getId() + ". " + current);
+				}
 			}
-		}
-		int saisiePlat= scan.nextInt();
-		scan.nextLine();
-		if (saisiePlat==0) {
-			System.out.println("Vous avez choisi la création d'un nouvel item");
 
-			System.out.println("Veuillez saisir son nom");
-			String nomPlat = scan.nextLine();
-
-			System.out.println("Veuillez saisir sa description");
-			String descriptionPlat = scan.nextLine();
-
-			System.out.println("Veuillez saisir son prix (ex. 12,5)");
-			Float prix = scan.nextFloat();
+			int saisiePlat= 0;
+			boolean saisieValide = false;
+	        do {
+	            try {
+	            	saisiePlat = scan.nextInt();
+	                System.out.println("Vous avez saisi : " + saisiePlat);
+	                saisieValide = true; // Sortir de la boucle car la saisie est valide
+	            } catch (InputMismatchException e) {
+	                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+	                scan.next(); // Effacer la saisie incorrecte du scanner
+	            }
+	        } while (!saisieValide);
 			scan.nextLine();
+			if (saisiePlat==0) {
+				System.out.println("Vous avez choisi la création d'un nouvel item");
 
-			System.out.println("Veuillez saisir son type (entrée, plat, dessert ou boisson)");
-			String typePlat = scan.nextLine();
+				System.out.println("Veuillez saisir son nom");
+				String nomPlat = scan.nextLine();
 
-			Plat platAjoute = platBll.insert(nomPlat, descriptionPlat, prix,typePlat,carte);
-			System.out.println("L'item suivant a été ajouté : " + platAjoute);
+				System.out.println("Veuillez saisir sa description");
+				String descriptionPlat = scan.nextLine();
 
-		} else {
-			Plat platADupliquer = platBll.selectById(saisiePlat);
-			Plat platAjoute = platBll.insert(platADupliquer.getNom(), platADupliquer.getDescription(), platADupliquer.getPrix(),platADupliquer.getType(),carte);			
-			System.out.println("L'item suivant a été ajoutée : " + platAjoute);
-		}
+				System.out.println("Veuillez saisir son prix (ex. 12,5)");
+				Float prix = (float) 0;
+				saisieValide = false;
+		        do {
+		            try {
+		            	prix = scan.nextFloat();
+		                System.out.println("Vous avez saisi : " + prix);
+		                saisieValide = true; // Sortir de la boucle car la saisie est valide
+		            } catch (InputMismatchException e) {
+		                System.out.println("Erreur : Vous devez entrer un nombre décimal valide. Réessayez.");
+		                scan.next(); // Effacer la saisie incorrecte du scanner
+		            }
+		        } while (!saisieValide);
+				scan.nextLine();
+
+
+				System.out.println("Veuillez saisir son type (entrée, plat, dessert ou boisson)");
+				String typePlat = scan.nextLine();
+
+
+				Plat platAjoute = platBll.insert(nomPlat, descriptionPlat, prix,typePlat,carte);
+				System.out.println("L'item suivant a été ajouté : " + platAjoute);
+
+			} else {
+				Plat platADupliquer = platBll.selectById(saisiePlat);
+				Plat platAjoute = platBll.insert(platADupliquer.getNom(), platADupliquer.getDescription(), platADupliquer.getPrix(),platADupliquer.getType(),carte);			
+				System.out.println("L'item suivant a été ajoutée : " + platAjoute);
+			}
 			System.out.println("Plat ajouté avec succès !");
+		} catch (BLLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	private static void listeCartes() {
@@ -585,6 +822,7 @@ public class ApplicationConsole {
 				afficherCarte(carteAjoute);
 				affecterCarteRestaurant(carteAjoute);
 			}
+
 		} catch (FileNotFoundException e) {
 			System.out.println("Une erreur est survenue :");
 			e.printStackTrace();
@@ -594,19 +832,42 @@ public class ApplicationConsole {
 			}
 			e.printStackTrace();
 
+
 		}
 	}
 
 	private static void affecterCarteRestaurant(Carte carte) {
 		System.out.println("A combien de restaurant voulez-vous affectez cette carte ?");
-		int nbAffectation = scan.nextInt();
+		int nbAffectation = 0;
+		boolean saisieValide = false;
+        do {
+            try {
+            	nbAffectation = scan.nextInt();
+                System.out.println("Vous avez saisi : " + nbAffectation);
+                saisieValide = true; // Sortir de la boucle car la saisie est valide
+            } catch (InputMismatchException e) {
+                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+                scan.next(); // Effacer la saisie incorrecte du scanner
+            }
+        } while (!saisieValide);
 		scan.nextLine();
 		if (nbAffectation > 0) {
 			System.out.println("Saisissez successivement les numéros des restaurants auxquels vous voulez affecter cette carte.");
 			listerRestaurant();
 			for (int i = 0; i < nbAffectation ; i++) {
 				System.out.println("Saisie " + (int) (i+1) + " :");
-				int idRestaurant = scan.nextInt();
+				int idRestaurant = 0;
+				saisieValide = false;
+		        do {
+		            try {
+		            	idRestaurant = scan.nextInt();
+		                System.out.println("Vous avez saisi : " + idRestaurant);
+		                saisieValide = true; // Sortir de la boucle car la saisie est valide
+		            } catch (InputMismatchException e) {
+		                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+		                scan.next(); // Effacer la saisie incorrecte du scanner
+		            }
+		        } while (!saisieValide);
 				scan.nextLine();
 				try {
 					Restaurant restaurant = restaurantBll.selectById(idRestaurant);
@@ -625,68 +886,126 @@ public class ApplicationConsole {
 		}
 	}
 
-	private static void ajouterPlat(List<Plat> plats, Carte carteNouvelle, String typePlat) throws BLLException {
+	private static void ajouterPlat(List<Plat> plats, Carte carteNouvelle, String typePlat){
 		for (Plat current : plats) {
 			if (current.getType().equals(typePlat)) {
 				System.out.println("\t" + current.getId() + ". " + current);
 			}
 		}
-		int saisiePlat= scan.nextInt();
+		int saisiePlat= 0;
+		boolean saisieValide = false;
+        do {
+            try {
+            	saisiePlat = scan.nextInt();
+                System.out.println("Vous avez saisi : " + saisiePlat);
+                saisieValide = true; // Sortir de la boucle car la saisie est valide
+            } catch (InputMismatchException e) {
+                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+                scan.next(); // Effacer la saisie incorrecte du scanner
+            }
+        } while (!saisieValide);
 		scan.nextLine();
-		if (saisiePlat==0) {
-			System.out.println("Vous avez choisi la création d'un nouvel item de type " + typePlat);
+		try {
+			if (saisiePlat==0) {
+				System.out.println("Vous avez choisi la création d'un nouvel item de type " + typePlat);
 
-			System.out.println("Veuillez saisir son nom");
-			String nomPlat = scan.nextLine();
+				System.out.println("Veuillez saisir son nom");
+				String nomPlat = scan.nextLine();
 
-			System.out.println("Veuillez saisir sa description");
-			String descriptionPlat = scan.nextLine();
+				System.out.println("Veuillez saisir sa description");
+				String descriptionPlat = scan.nextLine();
 
-			System.out.println("Veuillez saisir son prix (ex. 12,5)");
-			Float prix = scan.nextFloat();
-			scan.nextLine();
+				System.out.println("Veuillez saisir son prix (ex. 12,5)");
+				Float prix = (float) 0;
+				saisieValide = false;
+		        do {
+		            try {
+		            	prix = scan.nextFloat();
+		                System.out.println("Vous avez saisi : " + prix);
+		                saisieValide = true; // Sortir de la boucle car la saisie est valide
+		            } catch (InputMismatchException e) {
+		                System.out.println("Erreur : Vous devez entrer un nombre décimal valide. Réessayez.");
+		                scan.next(); // Effacer la saisie incorrecte du scanner
+		            }
+		        } while (!saisieValide);
+				scan.nextLine();
 
-			Plat platAjoute = platBll.insert(nomPlat, descriptionPlat, prix,typePlat,carteNouvelle);
-			System.out.println("L'item suivant a été ajouté : " + platAjoute);
+				Plat platAjoute;
 
-		} else {
-			Plat platADupliquer = platBll.selectById(saisiePlat);
-			Plat platAjoute = platBll.insert(platADupliquer.getNom(), platADupliquer.getDescription(), platADupliquer.getPrix(),typePlat,carteNouvelle);			
-			System.out.println("L'item suivant a été ajoutée : " + platAjoute);
-			System.out.println("********************");
+				platAjoute = platBll.insert(nomPlat, descriptionPlat, prix,typePlat,carteNouvelle);
+
+				System.out.println("L'item suivant a été ajouté : " + platAjoute);
+
+			} else {
+				Plat platADupliquer = platBll.selectById(saisiePlat);
+				Plat platAjoute = platBll.insert(platADupliquer.getNom(), platADupliquer.getDescription(), platADupliquer.getPrix(),typePlat,carteNouvelle);			
+				System.out.println("L'item suivant a été ajoutée : " + platAjoute);
+				System.out.println("********************");
+			}
+		} catch (BLLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
-	private static void modifierPlat(Carte carte) throws BLLException {
+	private static void modifierPlat(Carte carte){
 		System.out.println("Quel item souhaitez-vous modifier parmi les suivants ?");
-		List<Plat> plats =  platBll.selectAll();
-		for (Plat current : plats) {
-			if (current.getCarte().getId() == carte.getId()) {
-				System.out.println("\t" + current.getId() + ". " + current);
+		List<Plat> plats;
+		try {
+			plats = platBll.selectAll();
+
+			for (Plat current : plats) {
+				if (current.getCarte().getId() == carte.getId()) {
+					System.out.println("\t" + current.getId() + ". " + current);
+				}
 			}
+			int saisiePlat= 0;
+			boolean saisieValide = false;
+	        do {
+	            try {
+	            	saisiePlat = scan.nextInt();
+	                System.out.println("Vous avez saisi : " + saisiePlat);
+	                saisieValide = true; // Sortir de la boucle car la saisie est valide
+	            } catch (InputMismatchException e) {
+	                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+	                scan.next(); // Effacer la saisie incorrecte du scanner
+	            }
+	        } while (!saisieValide);
+			scan.nextLine();
+
+			Plat platAModifier = platBll.selectById(saisiePlat); 
+			System.out.println("Vous avez choisi la modification de l'item suivant :");
+			System.out.println(platAModifier);
+
+			System.out.println("Veuillez saisir son nom");
+			String nomPlat = scan.nextLine();
+			platAModifier.setNom(nomPlat);
+
+			System.out.println("Veuillez saisir sa description");
+			String descriptionPlat = scan.nextLine();
+			platAModifier.setDescription(descriptionPlat);
+
+			System.out.println("Veuillez saisir son prix (ex. 12,5)");
+			Float prix = (float) 0;
+			saisieValide = false;
+	        do {
+	            try {
+	            	prix = scan.nextFloat();
+	                System.out.println("Vous avez saisi : " + prix);
+	                saisieValide = true; // Sortir de la boucle car la saisie est valide
+	            } catch (InputMismatchException e) {
+	                System.out.println("Erreur : Vous devez entrer un nombre décimal valide. Réessayez.");
+	                scan.next(); // Effacer la saisie incorrecte du scanner
+	            }
+	        } while (!saisieValide);
+			scan.nextLine();
+			platAModifier.setPrix(prix);
+
+			platBll.update(platAModifier);
+			System.out.println("L'item suivant a été modifié : \n" + platAModifier);
+		} catch (BLLException e) {
+			e.printStackTrace();
 		}
-		int saisiePlat= scan.nextInt();
-		scan.nextLine();
-
-		Plat platAModifier = platBll.selectById(saisiePlat); 
-		System.out.println("Vous avez choisi la modification de l'item suivant :");
-		System.out.println(platAModifier);
-
-		System.out.println("Veuillez saisir son nom");
-		String nomPlat = scan.nextLine();
-		platAModifier.setNom(nomPlat);
-
-		System.out.println("Veuillez saisir sa description");
-		String descriptionPlat = scan.nextLine();
-		platAModifier.setDescription(descriptionPlat);
-
-		System.out.println("Veuillez saisir son prix (ex. 12,5)");
-		Float prix = scan.nextFloat();
-		scan.nextLine();
-		platAModifier.setPrix(prix);
-
-		platBll.update(platAModifier);
-		System.out.println("L'item suivant a été modifié : \n" + platAModifier);
 	}
 
 	private static void suppressionPlat(Carte carte) {
@@ -699,7 +1018,18 @@ public class ApplicationConsole {
 					System.out.println("\t" + current.getId() + ". " + current);
 				}
 			}
-			int saisiePlat= scan.nextInt();
+			int saisiePlat= 0;
+			boolean saisieValide = false;
+	        do {
+	            try {
+	            	saisiePlat = scan.nextInt();
+	                System.out.println("Vous avez saisi : " + saisiePlat);
+	                saisieValide = true; // Sortir de la boucle car la saisie est valide
+	            } catch (InputMismatchException e) {
+	                System.out.println("Erreur : Vous devez entrer un entier valide. Réessayez.");
+	                scan.next(); // Effacer la saisie incorrecte du scanner
+	            }
+	        } while (!saisieValide);
 			scan.nextLine();
 			platBll.delete(saisiePlat);
 		} catch (BLLException e) {
