@@ -299,7 +299,6 @@ public class ApplicationConsole {
 
 			System.out.println("Vous avez créer la carte suivante :");
 			afficherCarte(carteNouvelle);
-
 			affecterCarteRestaurant(carteNouvelle);
 
 		} catch (BLLException e) {
@@ -308,9 +307,7 @@ public class ApplicationConsole {
 		}
 	}
 
-	private static void creerCarteAuto() {}
-
-	private static void modifierCarte() {
+private static void modifierCarte() {
 		System.out.println("Vous avez choisi de modifier une carte existante");
 		listeCartes();
 
@@ -408,7 +405,44 @@ public class ApplicationConsole {
 		}
 	}
 
-	private static void affecterCarteRestaurant(Carte carteNouvelle) {
+	private static void creerCarteAuto() {
+		try {
+	        System.out.println("Vous avez choisi d'ajouter une carte automatiquement.");
+
+	        System.out.println("Veuillez saisir le chemin du fichier carte");
+	        String filePath = scan.nextLine();
+
+	        try (Scanner fileScanner = new Scanner(new File(filePath))) {
+	            // Skip the header line
+	            if (fileScanner.hasNext()) {
+	                fileScanner.nextLine();
+	            }
+	            Carte carteAjoute = null;
+	            if (fileScanner.hasNext()) {
+	                String nomCarte = fileScanner.nextLine();
+	                carteAjoute = carteBll.insert(nomCarte);
+	                System.out.println("Carte ajoutée avec succès: " + carteAjoute.getId());
+	                fileScanner.nextLine();
+	            }
+	            while (fileScanner.hasNext()) {
+	                String line = fileScanner.nextLine();
+	                String[] carteInfo = line.split(",");
+	                String nom = carteInfo[0];
+	                String description = carteInfo[1];
+	                float prix = Float.parseFloat(carteInfo[2].trim());
+	                String type = carteInfo[3];
+	                platBll.insert(nom,description,prix,type,carteAjoute);
+	            }
+	            afficherCarte(carteAjoute);
+				affecterCarteRestaurant(carteAjoute);
+	        }
+	    } catch (FileNotFoundException | BLLException e) {
+	        System.out.println("Une erreur est survenue :");
+	        e.printStackTrace();
+	    }
+	}
+
+	private static void affecterCarteRestaurant(Carte carte) {
 		System.out.println("A combien de restaurant voulez-vous affectez cette carte ?");
 		int nbAffectation = scan.nextInt();
 		scan.nextLine();
@@ -420,8 +454,9 @@ public class ApplicationConsole {
 				scan.nextLine();
 				try {
 					Restaurant restaurant = restaurantBll.selectById(idRestaurant);
-					restaurant.setCarte(carteNouvelle);
+					restaurant.setCarte(carte);
 					restaurantBll.update(restaurant);
+
 					System.out.println("Carte ajoutée avec succès dans le restaurant " + restaurant.getId());
 				} catch (BLLException e) {
 					System.out.println("Une erreur est survenue :");
