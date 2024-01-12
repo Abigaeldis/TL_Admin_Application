@@ -1,21 +1,24 @@
 package controller;
  
-import java.util.ArrayList;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
-
 import java.util.Scanner;
 
 import bll.BLLException;
 import bll.CarteBLL;
+import bll.HoraireBLL;
 import bll.PlatBLL;
 import bll.RestaurantBLL;
 import bll.TableBLL;
 import bo.Carte;
+import bo.Horaire;
 import bo.Plat;
 import bo.Restaurant;
-import dal.DALException;
+import bo.Table;
 
 public class ApplicationConsole {
 	private static Scanner scan;
@@ -23,6 +26,7 @@ public class ApplicationConsole {
 	private static RestaurantBLL restaurantBll;
 	private static PlatBLL platBll;
 	private static CarteBLL carteBll;
+	private static HoraireBLL horaireBll;
 
 	public static void main(String[] args) throws BLLException {
 		System.out.println("Bienvenue dans notre application d'administration.\n");
@@ -32,6 +36,7 @@ public class ApplicationConsole {
 			restaurantBll = new RestaurantBLL();
 			platBll = new PlatBLL();
 			carteBll = new CarteBLL();
+			horaireBll = new HoraireBLL();
 
 		} catch (BLLException e) {
 			e.printStackTrace();
@@ -107,34 +112,74 @@ public class ApplicationConsole {
 	}
 
 	private static void creerRestaurantManuel() {
-		Carte carte = null;
-		try {
-		System.out.println("Vous avez choisi d'ajouter un restaurant");
+	    Carte carte = null;
+	    try {
+	        System.out.println("Vous avez choisi d'ajouter un restaurant");
 
-		System.out.println("Veuillez saisir le nom du restaurant");
-		String nom = scan.nextLine();
+	        System.out.println("Veuillez saisir le nom du restaurant");
+	        String nom = scan.nextLine();
 
-		System.out.println("Veuillez saisir l'adresse du restaurant");
-		String adresse = scan.nextLine();
+	        System.out.println("Veuillez saisir l'adresse du restaurant");
+	        String adresse = scan.nextLine();
 
-		System.out.println("Veuillez saisir une description pour votre restaurant");
-		String description = scan.nextLine();
-		System.out.println("Qu'elle carte voulez vous attribuer au restaurant");
-		System.out.println("Liste des cartes");
-		int carteSelectionner = scan.nextInt();
-		scan.nextLine();
-		
-		carte = carteBll.selectById(carteSelectionner);
-			Restaurant restaurantAjoute = restaurantBll.insert(nom, adresse, description,carte);
-			System.out.println("Restaurant ajouté avec succès " + restaurantAjoute);
-		} catch (BLLException e) {
-			System.out.println("Une erreur est survenue :");
-			for (String erreur : e.getErreurs()) {
-				System.out.println("\t" + erreur);
-			}
-			e.printStackTrace();
-		}
+	        System.out.println("Veuillez saisir une description pour votre restaurant");
+	        String description = scan.nextLine();
+
+	        System.out.println("Quelle carte voulez-vous attribuer au restaurant");
+	        System.out.println("Liste des cartes");
+	        int carteSelectionner = scan.nextInt();
+	        scan.nextLine();
+
+	        carte = carteBll.selectById(carteSelectionner);
+
+	        // Create Restaurant
+	        Restaurant restaurantAjoute = restaurantBll.insert(nom, adresse, description, carte);
+
+	        // Create and Insert Horaire with associated Restaurant
+	        System.out.println("Veuillez saisir un jour");
+	        String jour = scan.nextLine();
+
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+	        System.out.println("Veuillez saisir l'heure de début de service");
+	        String inputHeureDeDebut = scan.nextLine();
+	        LocalTime heureDeDebut = LocalTime.parse(inputHeureDeDebut, formatter);
+
+	        System.out.println("Veuillez saisir l'heure de fin de service");
+	        String inputHeureDeFin = scan.nextLine();
+	        LocalTime heureDeFin = LocalTime.parse(inputHeureDeFin, formatter);
+
+	        System.out.println("Veuillez saisir le créneau");
+	        String creneau = scan.nextLine();
+
+	        Horaire horaireAjoute = horaireBll.insert(jour, heureDeDebut, heureDeFin, creneau, restaurantAjoute);
+	        
+	        System.out.println("Veuillez saisir le numéro de table");
+	        int numTable = scan.nextInt();
+	        scan.nextLine();
+
+	        System.out.println("Veuillez saisir la capacité de la table");
+	        int capaciteTable = scan.nextInt();
+	        scan.nextLine();
+
+	        System.out.println("Veuillez saisir l'état de la table");
+	        String etat = scan.nextLine();
+
+	        Table tableAjoutee = tableBll.insert(numTable, capaciteTable, etat, restaurantAjoute);
+
+	        System.out.println("Restaurant ajouté avec succès " + restaurantAjoute);
+	        System.out.println("Horaire du restaurant ajouté avec succès " + horaireAjoute);
+	        System.out.println("Table du restaurant ajoutée avec succès " + tableAjoutee);
+	    } catch (BLLException e) {
+	        System.out.println("Une erreur est survenue :");
+	        for (String erreur : e.getErreurs()) {
+	            System.out.println("\t" + erreur);
+	        }
+	        e.printStackTrace();
+	    }
 	}
+
+
 
 	private static void creerCarteManuel() {
 		System.out.println("Vous avez choisi de créer une carte manuellement.");
